@@ -1,7 +1,15 @@
-import React from "react";
+import api from "./Api";
 
-const PostApi = () => {
-  return <div>PostApi</div>;
+export const createNote = async (
+  folderId: string,
+  title: string,
+  content: string,
+) => {
+  const res = await api.post("/notes", { folderId, title, content });
+  return res.data;
 };
 
-export default PostApi;
+export const createFolder = async (name: string) => {
+  const res = await api.post("/folders", { name });
+  return res.data;
+};

@@ -25,7 +25,7 @@ const AdditionalFolder = () => {
           <span>
             <FolderArchive />
           </span>
-          Favorite
+          Archived Notes
         </li>
       </ul>
     </div>

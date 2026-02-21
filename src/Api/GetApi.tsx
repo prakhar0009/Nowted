@@ -1,12 +1,21 @@
-import axios from "axios";
+import api from "./Api";
 
-const api = axios.create({
-  baseURL: "https://nowted-server.remotestate.com",
-});
-
-const GetApi = async () => {
-  const response = await api.get("/notes");
-  return response.data;
+export const getFolders = async () => {
+  const res = await api.get("/folders");
+  return res.data.folders;
 };
 
-export default GetApi;
+export const getRecentNotes = async () => {
+  const res = await api.get("/notes/recent");
+  return res.data.recentNotes;
+};
+
+export const getNotesByFolder = async (folderId: string) => {
+  const res = await api.get("/notes", { params: { folderId } });
+  return res.data.notes;
+};
+
+export const getNoteById = async (id: string) => {
+  const res = await api.get(`/notes/${id}`);
+  return res.data.note;
+};
