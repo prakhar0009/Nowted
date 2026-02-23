@@ -2,12 +2,13 @@ import { Folder, FolderOpen, FolderPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getFolders } from "../Api/GetApi";
 import { createFolder } from "../Api/PostApi";
-import type { Props } from "../data/notes";
+import { NavLink, useParams } from "react-router-dom";
 
-const NewFolder = ({ currFolder, setcurrFolder }: Props) => {
+const NewFolder = () => {
   const [folder, setfolder] = useState<any[]>([]);
   const [fName, setfName] = useState("");
   const [isFolder, setisFolder] = useState(false);
+  const { folderId } = useParams();
 
   const render = async () => {
     const data = await getFolders();
@@ -59,14 +60,14 @@ const NewFolder = ({ currFolder, setcurrFolder }: Props) => {
       )}
       <ul className="flex flex-col gap-3">
         {folder.map((curr) => (
-          <li
-            onClick={() => setcurrFolder(curr.id)}
+          <NavLink
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
             key={curr.id}
+            to={`/${curr.id}`}
           >
-            <span>{currFolder === curr.id ? <FolderOpen /> : <Folder />}</span>
+            <span>{folderId === curr.id ? <FolderOpen /> : <Folder />}</span>
             {curr.name}
-          </li>
+          </NavLink>
         ))}
       </ul>
     </div>

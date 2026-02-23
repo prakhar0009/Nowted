@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
-import type { FolderProps } from "../data/notes";
 import { getNotesByFolder } from "../Api/GetApi";
 import DeleteNote from "../Api/DeleteNote";
 import { Trash2 } from "lucide-react";
+import { NavLink, useParams } from "react-router-dom";
 
-const Middle = ({ currFolder }: FolderProps) => {
+const Middle = () => {
   const [notes, setnotes] = useState<any[]>([]);
+  const { folderId } = useParams();
 
   const renderNotes = async () => {
-    if (!currFolder) return;
-    const res = await getNotesByFolder(currFolder);
+    if (!folderId) return;
+    const res = await getNotesByFolder(folderId);
     setnotes(res);
   };
 
   useEffect(() => {
     renderNotes();
-  }, [currFolder]);
+  }, [folderId]);
 
   const currentTime = new Date().toLocaleDateString();
 
@@ -24,17 +25,21 @@ const Middle = ({ currFolder }: FolderProps) => {
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-white">
-            {currFolder ? "notes" : "select Folder"}
+            {folderId ? "Notes" : "Select Folder"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3.75 pb-7.5">
+      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7">
         {notes.map((curr) => (
-          <div
+          <NavLink
             key={curr.id}
-            className="w-full p-5 bg-secondary-hover rounded-xl border border-white/5 hover:bg-secondary-hover cursor-pointer transition-all"
+            to={`/${folderId}/${curr.id}`}
+            className={({ isActive }) =>
+              `w-full p-5 rounded-xl border border-white/5 cursor-pointer transition-all block
+              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"}`
+            }
           >
             <div className="flex justify-between items-center mb-2">
               <h4 className="text-sm font-medium text-white truncate">
@@ -51,12 +56,11 @@ const Middle = ({ currFolder }: FolderProps) => {
                 <Trash2 size={15} />
               </button>
             </div>
-
             <div className="flex justify-between items-center text-[14px] text-primary">
               <p>{currentTime}</p>
               <p className="truncate ml-3 opacity-70">{curr.preview}</p>
             </div>
-          </div>
+          </NavLink>
         ))}
       </div>
     </div>

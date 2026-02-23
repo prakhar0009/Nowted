@@ -5,15 +5,29 @@ import NewFolder from "./NewFolder";
 import RecentFolder from "./RecentFolder";
 import AdditionalFolder from "./AdditionalFolder";
 import type { Props } from "../data/notes";
-import type { FolderProps } from "../data/notes";
 
-const LeftSide = ({ currFolder, setcurrFolder, onNoteCreated }: Props) => {
+const LeftSide = ({
+  currFolder,
+  setcurrFolder,
+  currFolderName,
+  setcurrFolderName,
+  onNoteCreated,
+}: Props) => {
   return (
     <div className="w-full h-full bg-[#181818] p-[8%] flex flex-col gap-7">
       <SearchBar />
-      <NewNote currFolder={currFolder} onNoteCreated={onNoteCreated} />
+      <NewNote
+        currFolder={currFolder}
+        currFolderName={currFolderName}
+        onNoteCreated={onNoteCreated}
+      />
+      
       <RecentFolder />
-      <NewFolder setcurrFolder={setcurrFolder} currFolder={currFolder} />
+      <NewFolder
+        setcurrFolder={setcurrFolder}
+        setcurrFolderName={setcurrFolderName}
+        currFolder={currFolder}
+      />
       <AdditionalFolder />
       <div className="flex justify-center items-center">
         <ToggleTheme />

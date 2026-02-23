@@ -1,21 +1,23 @@
 import { Plus, X } from "lucide-react";
-import type { FolderProps } from "../data/notes";
 import { createNote } from "../Api/PostApi";
 import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-const NewNote = ({ currFolder, onNoteCreated }: FolderProps) => {
+const NewNote = () => {
   const [overlay, setoverlay] = useState(false);
   const [title, settitle] = useState("");
   const [message, setmessage] = useState("");
+  const { folderId } = useParams();
+  const navigate = useNavigate();
 
   const handleNewNote = async () => {
-    if (!currFolder) return alert("Folder not selected");
+    if (!folderId) return alert("Folder not selected");
     if (title.trim() === "") return alert("File name can't be empty");
-    await createNote(currFolder, title, message);
+    const res = await createNote(folderId, title, message);
     settitle("");
     setoverlay(false);
     setmessage("");
-    if (onNoteCreated) onNoteCreated();
+    navigate(`/${folderId}/${res.note.id}`);
   };
   return (
     <>
