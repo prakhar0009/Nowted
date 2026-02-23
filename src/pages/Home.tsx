@@ -1,21 +1,33 @@
+import { useState } from "react";
 import LeftSide from "../components/LeftSide";
 import Middle from "../components/Middle";
 import RightSide from "../components/RightSide";
 
-function Home() {
+const Home = () => {
+  const [currFolder, setcurrFolder] = useState<string | null>(null);
+  const [refresh, setrefresh] = useState(0);
+  const [currNote, setcurrNote] = useState<string | null>(null);
   return (
     <div className="flex w-full h-full bg-[#181818] overflow-hidden">
       <div className="w-[20%] h-full border-r border-white/5">
-        <LeftSide />
+        <LeftSide
+          setcurrFolder={setcurrFolder}
+          currFolder={currFolder}
+          onNoteCreated={() => setrefresh((r) => r + 1)}
+        />
       </div>
       <div className="w-[25%] h-full border-r border-white/5">
-        <Middle />
+        <Middle
+          currFolder={currFolder}
+          refresh={refresh}
+          setcurrNote={setcurrNote}
+        />
       </div>
       <div className="w-[55%] h-full">
-        <RightSide />
+        <RightSide currNote={currNote} />
       </div>
     </div>
   );
-}
+};
 
 export default Home;

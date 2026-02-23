@@ -1,14 +1,33 @@
-export const notes = [
-  {
-    id: 1,
-    title: "Reflection on the Month of June",
-    date: "21/06/2022",
-    content: "It's hard to believe that June is already over! Looking back...",
-  },
-  {
-    id: 2,
-    title: "Project proposal",
-    date: "20/06/2022",
-    content: "This is a proposal for the new notes app named Nowted...",
-  },
-];
+export type Note = {
+  id: string;
+  title: string;
+  content: string;
+  folderId: string;
+  isFavorite: boolean;
+  isArchived: boolean;
+  createdAt: string;
+  preview: string;
+};
+
+export type Folder = {
+  id: string;
+  name: string;
+  createdAt: string;
+};
+
+export type Props = {
+  currFolder: string | null;
+  setcurrFolder: (id: string) => void;
+  onNoteCreated?: () => void;
+};
+
+export type FolderProps = {
+  currFolder: string | null;
+  refresh?: number;
+  onNoteCreated?: () => void;
+  setcurrNote?: (id: string) => void;
+};
+
+export type NoteProps = {
+  currNote: string | null;
+};

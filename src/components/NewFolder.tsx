@@ -2,8 +2,9 @@ import { Folder, FolderOpen, FolderPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getFolders } from "../Api/GetApi";
 import { createFolder } from "../Api/PostApi";
+import type { Props } from "../data/notes";
 
-const NewFolder = () => {
+const NewFolder = ({ currFolder, setcurrFolder }: Props) => {
   const [folder, setfolder] = useState<any[]>([]);
   const [fName, setfName] = useState("");
   const [isFolder, setisFolder] = useState(false);
@@ -57,12 +58,13 @@ const NewFolder = () => {
         </div>
       )}
       <ul className="flex flex-col gap-3">
-        {folder.map((curr, i) => (
+        {folder.map((curr) => (
           <li
+            onClick={() => setcurrFolder(curr.id)}
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
             key={curr.id}
           >
-            <span>{i === 0 ? <FolderOpen /> : <Folder />}</span>
+            <span>{currFolder === curr.id ? <FolderOpen /> : <Folder />}</span>
             {curr.name}
           </li>
         ))}

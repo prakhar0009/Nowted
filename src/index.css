@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 @theme {
   --color-primary: rgba(255, 255, 255, 0.6);
   --color-primary-hover: #312eb5;
@@ -8,9 +7,14 @@
   --color-middle: rgba(255, 255, 255, 0.03);
   --color-middle-active: rgba(255, 255, 255, 0.1);
 }
-
+:root {
+  height: 100%;
+}
 html,
 body,
 #root {
   height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #181818;
 }
