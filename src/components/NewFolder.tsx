@@ -12,7 +12,7 @@ const NewFolder = () => {
   const { folderId } = useParams();
 
   const render = async () => {
-    if (!folderId) return;
+    // if (!folderId) return;
     const data = await getFolders();
     setfolder(data);
   };
@@ -30,7 +30,7 @@ const NewFolder = () => {
   };
 
   return (
-    <div className="flex-1">
+    <div className="flex-1 min-h-0 flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-gray-500 text-xs font-semibold tracking-wider">
           Folders
@@ -60,7 +60,7 @@ const NewFolder = () => {
           </button>
         </div>
       )}
-      <ul className="flex flex-col gap-3 h-60 overflow-y-auto hide-scrollbar">
+      <ul className="flex flex-col gap-3 min-h-0 overflow-y-auto hide-scrollbar">
         {folder.map((curr) => (
           <NavLink
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"

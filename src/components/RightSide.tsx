@@ -52,7 +52,7 @@ const RightSide = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-20 py-3">
+        <div className="flex items-center gap-17.5 py-3">
           <div className="text-primary flex items-center gap-5">
             <Folder size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
@@ -64,7 +64,7 @@ const RightSide = () => {
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <p className="text-gray-300 leading-relaxed text-base">
+        <p className="text-secondary leading-relaxed text-base">
           {note.content}
         </p>
       </div>

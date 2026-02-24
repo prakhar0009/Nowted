@@ -46,7 +46,7 @@ const Middle = () => {
             to={`/${folderId}/${curr.id}`}
             className={({ isActive }) =>
               `w-full p-5 rounded-xl border border-white/5 cursor-pointer transition-all block
-              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"} hover:shadow-lg hover:shadow-[#312eb5]`
+              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"} hover:shadow-lg hover:shadow-primary-hover`
             }
           >
             <div className="flex justify-between items-center mb-2">
