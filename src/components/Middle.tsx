@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { getFolders, getNotesByFolder } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
 import { Trash2 } from "lucide-react";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 
 const Middle = () => {
   const [notes, setnotes] = useState<any[]>([]);
   const [folderName, setfolderName] = useState<string>("");
   const { folderId } = useParams();
+  const navigate = useNavigate();
 
   const renderNotes = async () => {
     if (!folderId) return;
@@ -38,14 +39,14 @@ const Middle = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7">
+      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7 hide-scrollbar  ">
         {notes.map((curr) => (
           <NavLink
             key={curr.id}
             to={`/${folderId}/${curr.id}`}
             className={({ isActive }) =>
               `w-full p-5 rounded-xl border border-white/5 cursor-pointer transition-all block
-              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"}`
+              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"} hover:shadow-lg hover:shadow-[#312eb5]`
             }
           >
             <div className="flex justify-between items-center mb-2">
@@ -56,10 +57,12 @@ const Middle = () => {
                 onClick={async () => {
                   await DeleteNote(curr.id);
                   renderNotes();
+                  navigate(`/${folderId}`);
+                  return;
                 }}
                 className="text-gray-500 hover:text-red-400 transition-all ml-2"
               >
-                <Trash2 size={15} />
+                <Trash2 size={20} />
               </button>
             </div>
             <div className="flex justify-between items-center text-[14px] text-primary">

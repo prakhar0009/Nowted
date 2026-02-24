@@ -80,7 +80,7 @@ const NewFolder = () => {
                 }}
                 className="text-gray-500 hover:text-red-400 transition-all ml-2"
               >
-                <Trash2 size={15} />
+                <Trash2 size={17} />
               </button>
             </div>
           </NavLink>

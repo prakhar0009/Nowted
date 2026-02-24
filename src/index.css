@@ -19,11 +19,7 @@ body,
   background-color: #181818;
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
 .hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  /* scrollbar-width: none; */
+  scrollbar-color: rgb(70, 64, 64) rgba(0, 0, 0, 0);
 }
