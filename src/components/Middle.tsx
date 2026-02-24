@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getFolders, getNotesByFolder } from "../Api/GetApi";
-import DeleteNote from "../Api/DeleteNote";
+import { DeleteNote } from "../Api/DeleteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 
@@ -53,8 +53,7 @@ const Middle = () => {
                 {curr.title}
               </h4>
               <button
-                onClick={async (e) => {
-                  e.stopPropagation();
+                onClick={async () => {
                   await DeleteNote(curr.id);
                   renderNotes();
                 }}

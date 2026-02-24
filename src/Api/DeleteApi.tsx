@@ -1,7 +1,6 @@
-import React from "react";
+import api from "./Api";
 
-const DeleteApi = () => {
-  return <div>DeleteApi</div>;
+export const DeleteNote = async (id: string) => {
+  const res = await api.delete(`/notes/${id}`);
+  return res.data;
 };
-
-export default DeleteApi;
