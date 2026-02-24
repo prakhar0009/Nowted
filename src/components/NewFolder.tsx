@@ -1,8 +1,9 @@
-import { Folder, FolderOpen, FolderPlus } from "lucide-react";
+import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getFolders } from "../Api/GetApi";
 import { createFolder } from "../Api/PostApi";
 import { NavLink, useParams } from "react-router-dom";
+import { DeleteFolder } from "../Api/DeleteApi";
 
 const NewFolder = () => {
   const [folder, setfolder] = useState<any[]>([]);
@@ -11,6 +12,7 @@ const NewFolder = () => {
   const { folderId } = useParams();
 
   const render = async () => {
+    if (!folderId) return;
     const data = await getFolders();
     setfolder(data);
   };
@@ -67,6 +69,20 @@ const NewFolder = () => {
           >
             <span>{folderId === curr.id ? <FolderOpen /> : <Folder />}</span>
             {curr.name}
+            <div className="flex justify-between w-full items-center mb-2">
+              <h4 className="text-sm font-medium text-white truncate">
+                {curr.title}
+              </h4>
+              <button
+                onClick={async () => {
+                  await DeleteFolder(curr.id);
+                  render();
+                }}
+                className="text-gray-500 hover:text-red-400 transition-all ml-2"
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
           </NavLink>
         ))}
       </ul>
