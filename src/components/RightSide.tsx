@@ -20,7 +20,7 @@ const RightSide = () => {
   if (!noteId || !note) {
     return (
       <div className="w-full h-full bg-[#181818] flex flex-col items-center justify-center gap-4">
-        <FileText size={60} className="text-gray-600" />
+        <FileText strokeWidth={0.8} size={100} className="text-secondary" />
         <h2 className="text-white text-2xl font-semibold">
           Select a note to view
         </h2>

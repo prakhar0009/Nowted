@@ -58,7 +58,7 @@ const NewFolder = () => {
           </button>
         </div>
       )}
-      <ul className="flex flex-col gap-3">
+      <ul className="flex flex-col gap-3 h-60 overflow-y-auto hide-scrollbar">
         {folder.map((curr) => (
           <NavLink
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"

@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { getNotesByFolder } from "../Api/GetApi";
+import { getFolders, getNotesByFolder } from "../Api/GetApi";
 import DeleteNote from "../Api/DeleteNote";
 import { Trash2 } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 
 const Middle = () => {
   const [notes, setnotes] = useState<any[]>([]);
+  const [folderName, setfolderName] = useState<string>("");
   const { folderId } = useParams();
 
   const renderNotes = async () => {
@@ -15,6 +16,12 @@ const Middle = () => {
   };
 
   useEffect(() => {
+    const renderfolderName = async () => {
+      const folders = await getFolders();
+      const currFolder = folders.find((f: any) => f.id === folderId);
+      if (currFolder) setfolderName(currFolder.name);
+    };
+    renderfolderName();
     renderNotes();
   }, [folderId]);
 
@@ -25,7 +32,7 @@ const Middle = () => {
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-white">
-            {folderId ? "Notes" : "Select Folder"}
+            {folderId ? folderName : "Select Folder"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
