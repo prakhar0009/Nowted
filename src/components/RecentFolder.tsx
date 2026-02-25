@@ -1,14 +1,15 @@
 import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getRecentNotes } from "../Api/GetApi";
-import { NavLink, useNavigate, useParams } from "react-router-dom";
+import { NavLink } from "react-router-dom";
+import type { Note } from "../data/notes";
 
 const RecentFolder = () => {
-  const [recent, setRecent] = useState<any[]>([]);
+  const [recent, setRecent] = useState<Note[]>([]);
 
   const render = async () => {
     const data = await getRecentNotes();
-    setRecent(data);
+    setRecent(data || []);
   };
 
   useEffect(() => {
@@ -21,7 +22,7 @@ const RecentFolder = () => {
         Recents
       </h3>
       <div className="flex flex-col gap-5">
-        {recent.map((curr) => (
+        {recent?.map((curr) => (
           <NavLink
             to={`/${curr.folderId}/${curr.id}`}
             key={curr.id}
@@ -30,9 +31,7 @@ const RecentFolder = () => {
             <span>
               <FileText />
             </span>
-            <span className="text-sm truncate font-medium">
-              {curr.title || "Untitled Note"}
-            </span>
+            <span className="text-sm truncate font-medium">{curr.title}</span>
           </NavLink>
         ))}
         {recent.length === 0 && (

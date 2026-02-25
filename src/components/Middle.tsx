@@ -3,11 +3,13 @@ import { getFolders, getNotesByFolder } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import type { Note } from "../data/notes";
 
 const Middle = () => {
-  const [notes, setnotes] = useState<any[]>([]);
+  const [notes, setnotes] = useState<Note[]>([]);
   const [folderName, setfolderName] = useState<string>("");
-  const { folderId } = useParams();
+  const { folderId } = useParams<{ folderId: string }>();
   const navigate = useNavigate();
 
   const renderNotes = async () => {
@@ -16,12 +18,19 @@ const Middle = () => {
     setnotes(res);
   };
 
+  const renderfolderName = async () => {
+    const folders = await getFolders();
+    if (!Array.isArray(folders)) return;
+    const currFolder = folders.find((f) => f.id === folderId);
+    if (currFolder) setfolderName(currFolder.name);
+  };
+
   useEffect(() => {
-    const renderfolderName = async () => {
-      const folders = await getFolders();
-      const currFolder = folders.find((f: any) => f.id === folderId);
-      if (currFolder) setfolderName(currFolder.name);
-    };
+    if (!folderId) {
+      setnotes([]);
+      setfolderName("");
+      return;
+    }
     renderfolderName();
     renderNotes();
   }, [folderId]);
@@ -29,7 +38,7 @@ const Middle = () => {
   const currentTime = new Date().toLocaleDateString();
 
   return (
-    <div className="w-full h-full bg-[#181818] flex flex-col">
+    <div className="w-full h-full bg-[#1C1C1C] flex flex-col">
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-white">
@@ -39,7 +48,7 @@ const Middle = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7 hide-scrollbar  ">
+      <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7 hide-scrollbar ">
         {notes.map((curr) => (
           <NavLink
             key={curr.id}
@@ -55,10 +64,14 @@ const Middle = () => {
               </h4>
               <button
                 onClick={async () => {
-                  await DeleteNote(curr.id);
-                  renderNotes();
-                  navigate(`/${folderId}`);
-                  return;
+                  try {
+                    await DeleteNote(curr.id);
+                    toast.success("File is deleted");
+                    renderNotes();
+                    navigate(`/${folderId}`);
+                  } catch {
+                    toast.error("Internal Error");
+                  }
                 }}
                 className="text-gray-500 hover:text-red-400 transition-all ml-2"
               >

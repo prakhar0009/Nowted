@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import api from "./Api";
 
 export const createNote = async (
@@ -5,11 +6,21 @@ export const createNote = async (
   title: string,
   content: string,
 ) => {
-  const res = await api.post("/notes", { folderId, title, content });
-  return res.data;
+  try {
+    const res = await api.post("/notes", { folderId, title, content });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) return e.message;
+    else toast.error(`Internal Error`);
+  }
 };
 
 export const createFolder = async (name: string) => {
-  const res = await api.post("/folders", { name });
-  return res.data;
+  try {
+    const res = await api.post("/folders", { name });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) return e.message;
+    else toast.error(`Internal Error`);
+  }
 };

@@ -63,8 +63,8 @@ const RightSide = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto">
-        <p className="text-secondary leading-relaxed text-base">
+      <div className="flex-1 overflow-y-auto hide-scrollbar">
+        <p className="text-secondary leading-relaxed text-base ">
           {note.content}
         </p>
       </div>

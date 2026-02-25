@@ -4,6 +4,7 @@ import { getFolders } from "../Api/GetApi";
 import { createFolder } from "../Api/PostApi";
 import { NavLink, useParams } from "react-router-dom";
 import { DeleteFolder } from "../Api/DeleteApi";
+import toast from "react-hot-toast";
 
 const NewFolder = () => {
   const [folder, setfolder] = useState<any[]>([]);
@@ -12,7 +13,6 @@ const NewFolder = () => {
   const { folderId } = useParams();
 
   const render = async () => {
-    // if (!folderId) return;
     const data = await getFolders();
     setfolder(data);
   };
@@ -61,11 +61,11 @@ const NewFolder = () => {
         </div>
       )}
       <ul className="flex flex-col gap-3 min-h-0 overflow-y-auto hide-scrollbar">
-        {folder.map((curr) => (
+        {folder?.map((curr) => (
           <NavLink
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
             key={curr.id}
-            to={`/${curr.id}`}
+            to={`/${curr.id}/${curr.name}`}
           >
             <span>{folderId === curr.id ? <FolderOpen /> : <Folder />}</span>
             {curr.name}
@@ -75,8 +75,13 @@ const NewFolder = () => {
               </h4>
               <button
                 onClick={async () => {
-                  await DeleteFolder(curr.id);
-                  render();
+                  try {
+                    await DeleteFolder(curr.id);
+                    toast.success("Folder is Deleted");
+                    render();
+                  } catch {
+                    toast.error("Can't delete Folder");
+                  }
                 }}
                 className="text-gray-500 hover:text-red-400 transition-all ml-2"
               >

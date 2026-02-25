@@ -1,3 +1,4 @@
+import { Toaster } from "react-hot-toast";
 import LeftSide from "../components/LeftSide";
 import Middle from "../components/Middle";
 import RightSide from "../components/RightSide";
@@ -14,6 +15,7 @@ const Home = () => {
       <div className="w-[55%] h-full">
         <RightSide />
       </div>
+      <Toaster />
     </div>
   );
 };
