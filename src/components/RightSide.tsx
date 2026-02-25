@@ -1,4 +1,12 @@
-import { CircleEllipsis, CalendarDays, Folder, FileText } from "lucide-react";
+import {
+  CircleEllipsis,
+  CalendarDays,
+  Folder,
+  FileText,
+  Star,
+  FolderArchive,
+  Trash,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
@@ -6,6 +14,7 @@ import { useParams } from "react-router-dom";
 const RightSide = () => {
   const { noteId } = useParams();
   const [note, setnote] = useState<any>(null);
+  const [overlay, setoverlay] = useState(false);
 
   const loadNote = async () => {
     if (!noteId) return;
@@ -14,6 +23,7 @@ const RightSide = () => {
   };
 
   useEffect(() => {
+    // const handleOverlay = ;
     loadNote();
   }, [noteId]);
 
@@ -33,12 +43,38 @@ const RightSide = () => {
   }
 
   return (
-    <div className="w-full h-full bg-[#181818] flex flex-col p-[5%] gap-7">
+    <div
+      className="w-full h-full bg-[#181818] flex flex-col p-[5%] gap-7"
+      onClick={(e) => e.stopPropagation()}
+    >
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-white">{note.title}</h1>
-        <div className="cursor-pointer text-primary hover:text-white">
-          <CircleEllipsis size={30} />
-        </div>
+        <CircleEllipsis
+          size={30}
+          className="text-primary hover:text-white cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            setoverlay((prev) => !prev);
+          }}
+        />
+        {overlay && (
+          <div className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-[#333333] text-white">
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
+              <Star />
+              {"Add to Favorites"}
+            </button>
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
+              <FolderArchive />
+              {"Archived"}
+            </button>
+            {/* <div className="divide-y divide-white/10"></div> */}
+            <hr className="w-50 border border-b-[#333333]"></hr>
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
+              <Trash />
+              {"Delete"}
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="flex flex-col divide-y divide-white/10">

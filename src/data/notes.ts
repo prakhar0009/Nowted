@@ -7,6 +7,7 @@ export type Note = {
   isArchived: boolean;
   createdAt: string;
   preview: string;
+  folder: { name: string };
 };
 
 export type Folder = {
@@ -33,4 +34,8 @@ export type FolderProps = {
 
 export type NoteProps = {
   currNote: string | null;
+};
+
+export type NoteWithFolder = Note & {
+  folder: { name: string };
 };

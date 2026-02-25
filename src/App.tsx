@@ -4,7 +4,7 @@ import NotFound from "./pages/NotFound";
 
 const App = () => {
   return (
-    <div className="w-full h-full bg-[#181818] text-white overflow-hidden">
+    <div className="w-full h-full bg-[#181818] text-white overflow-hidden light">
       <div className="w-full h-full mx-auto">
         <Routes>
           <Route path="/" element={<Home />} />
