@@ -35,12 +35,15 @@ const NewFolder = () => {
   };
 
   const handleRenameFolder = async (id: string) => {
-    if (fName.trim() === "") {
-      await putFolders(id, tempFName);
+    if (tempFName.trim() === "") {
       seteditFolder(null);
-      render();
-      navigate(`${id}/${tempFName}`);
-    } else seteditFolder(null);
+      return;
+    }
+
+    await putFolders(id, tempFName);
+    seteditFolder(null);
+    render();
+    navigate(`/${id}/${tempFName}`);
   };
 
   return (

@@ -16,6 +16,9 @@ const RightSide = () => {
   const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
 
+  const [editNote, seteditNote] = useState<string | null>(null);
+  const [tempNote, settempNote] = useState("");
+
   const loadNote = async () => {
     if (!noteId) return;
     const res = await getNoteById(noteId);
@@ -76,7 +79,7 @@ const RightSide = () => {
         )}
       </div>
 
-      <div className="flex flex-col divide-y divide-white/10">
+      <div className="flex flex-col dark:divide-y divide-y dark:divide-white/10">
         <div className="flex items-center gap-20 py-3">
           <div className="text-primary flex items-center gap-5">
             <CalendarDays size={20} />

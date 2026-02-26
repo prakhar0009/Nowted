@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 
 export const putFolders = async (folderId: string, folderName: string) => {
   try {
-    const res = await api.put(`/folders/${folderId}`, { name: folderName });
+    const res = await api.patch(`/folders/${folderId}`, { name: folderName });
     return res.data;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -17,7 +17,7 @@ export const putNotes = async (
   content: string,
 ) => {
   try {
-    const res = await api.put(`/notes/${folderId}`, {
+    const res = await api.patch(`/notes/${folderId}`, {
       folderId,
       title,
       content,
