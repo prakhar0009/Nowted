@@ -6,7 +6,7 @@ import AdditionalFolder from "./AdditionalFolder";
 
 const LeftSide = () => {
   return (
-    <div className="w-full h-full bg-[#181818] p-[8%] flex flex-col gap-7">
+    <div className="w-full h-full bg-mainbg p-[8%] flex flex-col gap-7">
       <NewNote />
 
       <RecentFolder />

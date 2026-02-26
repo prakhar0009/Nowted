@@ -29,9 +29,9 @@ const RightSide = () => {
 
   if (!noteId || !note) {
     return (
-      <div className="w-full h-full bg-[#181818] flex flex-col items-center justify-center gap-4">
+      <div className="w-full h-full bg-mainbg flex flex-col items-center justify-center gap-4">
         <FileText strokeWidth={0.8} size={100} className="text-secondary" />
-        <h2 className="text-white text-2xl font-semibold">
+        <h2 className="text-text text-2xl font-semibold">
           Select a note to view
         </h2>
         <p className="text-gray-500 text-sm text-center px-10">
@@ -44,21 +44,21 @@ const RightSide = () => {
 
   return (
     <div
-      className="w-full h-full bg-[#181818] flex flex-col p-[5%] gap-7"
+      className="w-full h-full bg-mainbg flex flex-col p-[5%] gap-7"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-white">{note.title}</h1>
+        <h1 className="text-3xl font-bold text-text">{note.title}</h1>
         <CircleEllipsis
           size={30}
-          className="text-primary hover:text-white cursor-pointer"
+          className="text-primary hover:text-text cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             setoverlay((prev) => !prev);
           }}
         />
         {overlay && (
-          <div className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-[#333333] text-white">
+          <div className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-overlay text-text">
             <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
               <Star />
               {"Add to Favorites"}
@@ -67,9 +67,8 @@ const RightSide = () => {
               <FolderArchive />
               {"Archived"}
             </button>
-            {/* <div className="divide-y divide-white/10"></div> */}
-            <hr className="w-50 border border-b-[#333333]"></hr>
-            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
+            <hr className="w-50 border border-b-overlay"></hr>
+            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover">
               <Trash />
               {"Delete"}
             </button>
@@ -83,7 +82,7 @@ const RightSide = () => {
             <CalendarDays size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Date</h3>
           </div>
-          <div className="text-white text-sm font-bold underline decoration-gray-600 underline-offset-4">
+          <div className="text-text text-sm font-bold underline decoration-primary underline-offset-4">
             {new Date(note.createdAt).toLocaleDateString("en-GB")}
           </div>
         </div>
@@ -93,7 +92,7 @@ const RightSide = () => {
             <Folder size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
-          <div className="text-white text-sm underline decoration-gray-600 underline-offset-4 font-bold">
+          <div className="text-text text-sm underline decoration-primary underline-offset-4 font-bold">
             {note.folder.name}
           </div>
         </div>

@@ -4,7 +4,7 @@ const AdditionalFolder = () => {
   return (
     <div className="flex-end">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-gray-500 text-xs font-semibold tracking-wider">
+        <h3 className="text-primary text-xs font-semibold tracking-wider">
           More
         </h3>
       </div>

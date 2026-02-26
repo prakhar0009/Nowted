@@ -28,7 +28,11 @@ const NewNote = () => {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-3">
         <div className="flex justify-between items-center">
-          <img src={Nowted} alt="Nowted_logo" />
+          <img
+            src={Nowted}
+            alt="Nowted_logo"
+            className="dark:invert-0 invert-100"
+          />
           <button
             onClick={() => setsearch(!search)}
             className="text-xl cursor-pointer text-primary hover:text-secondary"
@@ -38,6 +42,7 @@ const NewNote = () => {
         </div>
       </div>
 
+      {/* Implemented: Conditional swap between Search Bar and New Note Button */}
       {search ? (
         <input
           autoFocus
@@ -47,7 +52,7 @@ const NewNote = () => {
           onBlur={() => {
             if (searchBar.trim() === "") setsearch(false);
           }}
-          className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-white outline-none"
+          className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-text outline-none"
           type="text"
         />
       ) : (
@@ -63,43 +68,43 @@ const NewNote = () => {
       )}
 
       {overlay && (
-        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-          <div className="bg-[#222222] rounded-xl p-6 w-[90%] max-w-md flex flex-col gap-4">
+        <div className="fixed inset-0 bg-overlaybg flex items-center justify-center z-50">
+          <div className="bg-overlay rounded-xl p-6 w-[90%] max-w-md flex flex-col gap-4">
             <div className="flex justify-between items-center">
-              <h2 className="text-white font-semibold text-lg">New Note</h2>
+              <h2 className="text-text font-semibold text-lg">New Note</h2>
               <button
                 onClick={() => setoverlay(false)}
-                className="text-gray-500 hover:text-white"
+                className="text-primary hover:text-text"
               >
                 <X size={20} />
               </button>
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-gray-400 text-sm">Title</label>
+              <label className="text-primary text-sm">Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={(e) => settitle(e.target.value)}
                 placeholder="Enter note title"
-                className="bg-white/10 text-white text-sm rounded px-3 py-2 outline-none"
+                className="bg-middle-active text-text text-sm rounded px-3 py-2 outline-none"
               />
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-gray-400 text-sm">Content</label>
+              <label className="text-primary text-sm">Content</label>
               <textarea
                 value={message}
                 onChange={(e) => setmessage(e.target.value)}
                 placeholder="Enter note content"
                 rows={4}
-                className="bg-white/10 text-white text-sm rounded px-3 py-2 outline-none resize-none"
+                className="bg-middle-active text-text text-sm rounded px-3 py-2 outline-none resize-none"
               />
             </div>
 
             <button
               onClick={handleNewNote}
-              className="bg-white/20 hover:bg-white/30 text-white py-2 rounded-md text-sm transition-all"
+              className="bg-primary hover:bg-secondary-hover text-text py-2 rounded-md text-sm transition-all"
             >
               Add
             </button>

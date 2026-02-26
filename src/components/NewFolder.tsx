@@ -46,12 +46,12 @@ const NewFolder = () => {
   return (
     <div className="flex-1 min-h-0 flex flex-col">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-gray-500 text-xs font-semibold tracking-wider">
+        <h3 className="text-primary text-xs font-semibold tracking-wider">
           Folders
         </h3>
         <button
           onClick={() => setisFolder(!isFolder)}
-          className="text-gray-500 hover:text-white"
+          className="text-primary hover:text-text"
         >
           <FolderPlus />
         </button>
@@ -64,11 +64,11 @@ const NewFolder = () => {
             value={fName}
             onChange={(e) => setfName(e.target.value)}
             placeholder="Folder name"
-            className="bg-white/10 text-white text-sm rounded px-2 py-1 w-full outline-none"
+            className="bg-middle-active text-text text-sm rounded px-2 py-1 w-full outline-none"
           />
           <button
             onClick={handleNewFolder}
-            className="text-xs text-white bg-white/20 px-2 py-1 rounded hover:bg-white/30"
+            className="text-xs text-text bg-middle px-2 py-1 rounded hover:bg-middle-active"
           >
             Add
           </button>
@@ -94,7 +94,7 @@ const NewFolder = () => {
                   settempFName(e.target.value);
                 }}
                 onBlur={() => handleRenameFolder(curr.id)}
-                className="bg-white/10 text-white rounded px-1 outline-none w-full"
+                className="bg-middle-active text-text rounded px-1 outline-none w-full"
                 value={tempFName}
                 onClick={(e) => e.preventDefault()}
                 onKeyDown={(e) => {
@@ -118,7 +118,7 @@ const NewFolder = () => {
                     toast.error("Can't delete Folder");
                   }
                 }}
-                className="text-gray-500 hover:text-red-400 transition-all ml-2"
+                className="text-primary hover:text-red-400 transition-all ml-2"
               >
                 <Trash2 size={17} />
               </button>

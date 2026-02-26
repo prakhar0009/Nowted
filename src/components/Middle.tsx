@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getFolders, getNotesByFolder } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
-import { FileArchive, Star, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import type { Note } from "../data/notes";
@@ -38,10 +38,10 @@ const Middle = () => {
   const currentTime = new Date().toLocaleDateString();
 
   return (
-    <div className="w-full h-full bg-[#1C1C1C] flex flex-col">
+    <div className="w-full h-full bg-middleScreen flex flex-col">
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-semibold text-white">
+          <h2 className="text-xl font-semibold text-text">
             {folderId ? folderName : "Select Folder"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
@@ -54,61 +54,29 @@ const Middle = () => {
             key={curr.id}
             to={`/${folderId}/${curr.id}`}
             className={({ isActive }) =>
-              `w-full p-5 rounded-xl border border-white/5 cursor-pointer transition-all block
-              ${isActive ? "bg-white/10" : "bg-secondary-hover hover:bg-white/5"} hover:shadow-lg hover:shadow-primary-hover`
+              `w-full p-5 rounded-xl border border-middle-active/5 cursor-pointer block
+              ${isActive ? "bg-middle-active" : "bg-secondary-hover hover:bg-middle-active/5"} hover:shadow-lg hover:shadow-primary-hover`
             }
           >
             <div className="flex justify-between items-center mb-2">
-              <h4 className="text-sm font-medium text-white truncate">
+              <h4 className="text-sm font-medium text-text truncate">
                 {curr.title}
               </h4>
-              <div>
-                <button
-                  // onClick={async () => {
-                  //   try {
-                  //     await DeleteNote(curr.id);
-                  //     toast.success("File is deleted");
-                  //     renderNotes();
-                  //     navigate(`/${folderId}`);
-                  //   } catch {
-                  //     toast.error("Internal Error");
-                  //   }
-                  // }}
-                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
-                >
-                  <Star size={20} />
-                </button>
-                <button
-                  // onClick={async () => {
-                  //   try {
-                  //     await DeleteNote(curr.id);
-                  //     toast.success("File is deleted");
-                  //     renderNotes();
-                  //     navigate(`/${folderId}`);
-                  //   } catch {
-                  //     toast.error("Internal Error");
-                  //   }
-                  // }}
-                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
-                >
-                  <FileArchive size={20} />
-                </button>
-                <button
-                  onClick={async () => {
-                    try {
-                      await DeleteNote(curr.id);
-                      toast.success("File is deleted");
-                      renderNotes();
-                      navigate(`/${folderId}`);
-                    } catch {
-                      toast.error("Internal Error");
-                    }
-                  }}
-                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
-                >
-                  <Trash2 size={20} />
-                </button>
-              </div>
+              <button
+                onClick={async () => {
+                  try {
+                    await DeleteNote(curr.id);
+                    toast.success("File is deleted");
+                    renderNotes();
+                    navigate(`/${folderId}`);
+                  } catch {
+                    toast.error("Internal Error");
+                  }
+                }}
+                className="text-primary hover:text-red-400 transition-all ml-2"
+              >
+                <Trash2 size={20} />
+              </button>
             </div>
             <div className="flex justify-between items-center text-[14px] text-primary">
               <p>{currentTime}</p>

@@ -11,7 +11,7 @@ const ToggleTheme = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="w-[50%] py-3 border border-white/20 rounded-md hover:bg-white/5 transition-all flex items-center justify-center gap-2"
+      className="w-[50%] py-3 border dark:border-white/20 rounded-md dark:hover:bg-white/5 transition-all flex items-center justify-center gap-2"
     >
       {theme === "light" ? <Moon /> : <Sun />}
     </button>

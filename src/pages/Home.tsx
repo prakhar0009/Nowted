@@ -5,7 +5,7 @@ import RightSide from "../components/RightSide";
 
 const Home = () => {
   return (
-    <div className="flex w-full h-full bg-[#181818] overflow-hidden">
+    <div className="flex w-full h-full bg-mainbg overflow-hidden">
       <div className="w-[20%] h-full border-r border-white/5">
         <LeftSide />
       </div>

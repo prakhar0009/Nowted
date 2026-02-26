@@ -18,7 +18,7 @@ const RecentFolder = () => {
 
   return (
     <div className="w-full">
-      <h3 className="text-gray-500 text-xs font-semibold tracking-wider mb-4">
+      <h3 className="text-primary text-xs font-semibold tracking-wider mb-4">
         Recents
       </h3>
       <div className="flex flex-col gap-5">
@@ -35,7 +35,7 @@ const RecentFolder = () => {
           </NavLink>
         ))}
         {recent.length === 0 && (
-          <span className="text-xs text-gray-400 px-1 italic">
+          <span className="text-xs text-primary px-1 italic">
             No recent activity
           </span>
         )}
