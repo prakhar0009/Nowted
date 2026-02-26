@@ -1,7 +1,8 @@
-import { Plus, X } from "lucide-react";
+import { Plus, X, Search } from "lucide-react";
 import { createNote } from "../Api/PostApi";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Nowted from "../assets/Nowted.svg";
 
 const NewNote = () => {
   const [overlay, setoverlay] = useState(false);
@@ -9,6 +10,9 @@ const NewNote = () => {
   const [message, setmessage] = useState("");
   const { folderId } = useParams();
   const navigate = useNavigate();
+
+  const [search, setsearch] = useState(false);
+  const [searchBar, setSearchBar] = useState("");
 
   const handleNewNote = async () => {
     if (!folderId) return alert("Folder not selected");
@@ -19,17 +23,44 @@ const NewNote = () => {
     setmessage("");
     navigate(`/${folderId}/${res.note.id}`);
   };
+
   return (
-    <>
-      <button
-        className="w-full py-3 rounded-md bg-secondary-hover flex items-center justify-center cursor-pointer gap-2"
-        onClick={() => setoverlay(true)}
-      >
-        <span className="text-lg">
-          <Plus />
-        </span>
-        <span className="font-medium">New Note</span>
-      </button>
+    <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <div className="flex justify-between items-center">
+          <img src={Nowted} alt="Nowted_logo" />
+          <button
+            onClick={() => setsearch(!search)}
+            className="text-xl cursor-pointer text-primary hover:text-secondary"
+          >
+            {search ? <X size={20} /> : <Search />}
+          </button>
+        </div>
+      </div>
+
+      {search ? (
+        <input
+          autoFocus
+          value={searchBar}
+          placeholder="Search note here"
+          onChange={(e) => setSearchBar(e.target.value)}
+          onBlur={() => {
+            if (searchBar.trim() === "") setsearch(false);
+          }}
+          className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-white outline-none"
+          type="text"
+        />
+      ) : (
+        <button
+          className="w-full py-3 rounded-md bg-secondary-hover flex items-center justify-center cursor-pointer gap-2"
+          onClick={() => setoverlay(true)}
+        >
+          <span className="text-lg">
+            <Plus />
+          </span>
+          <span className="font-medium">New Note</span>
+        </button>
+      )}
 
       {overlay && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
@@ -75,7 +106,7 @@ const NewNote = () => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };
 
