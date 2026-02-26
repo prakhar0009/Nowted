@@ -2,15 +2,20 @@ import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getFolders } from "../Api/GetApi";
 import { createFolder } from "../Api/PostApi";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { DeleteFolder } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
+import { putFolders } from "../Api/PutApi";
 
 const NewFolder = () => {
   const [folder, setfolder] = useState<any[]>([]);
   const [fName, setfName] = useState("");
   const [isFolder, setisFolder] = useState(false);
   const { folderId } = useParams();
+  const [editFolder, seteditFolder] = useState<string | null>(null);
+  const [tempFName, settempFName] = useState("");
+
+  const navigate = useNavigate();
 
   const render = async () => {
     const data = await getFolders();
@@ -27,6 +32,15 @@ const NewFolder = () => {
     setfName("");
     setisFolder(false);
     render();
+  };
+
+  const handleRenameFolder = async (id: string) => {
+    if (fName.trim() === "") {
+      await putFolders(id, tempFName);
+      seteditFolder(null);
+      render();
+      navigate(`${id}/${tempFName}`);
+    } else seteditFolder(null);
   };
 
   return (
@@ -66,15 +80,36 @@ const NewFolder = () => {
             className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
             key={curr.id}
             to={`/${curr.id}/${curr.name}`}
+            onDoubleClick={(e) => {
+              e.preventDefault();
+              seteditFolder(curr.id);
+              settempFName(curr.name);
+            }}
           >
             <span>{folderId === curr.id ? <FolderOpen /> : <Folder />}</span>
-            {curr.name}
-            <div className="flex justify-between w-full items-center mb-2">
-              <h4 className="text-sm font-medium text-white truncate">
-                {curr.title}
-              </h4>
+            {editFolder === curr.id ? (
+              <input
+                autoFocus
+                onChange={(e) => {
+                  settempFName(e.target.value);
+                }}
+                onBlur={() => handleRenameFolder(curr.id)}
+                className="bg-white/10 text-white rounded px-1 outline-none w-full"
+                value={tempFName}
+                onClick={(e) => e.preventDefault()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleRenameFolder(curr.id);
+                  if (e.key === "Escape") seteditFolder(null);
+                }}
+                type="text"
+              />
+            ) : (
+              <span className="truncate w-full">{curr.name}</span>
+            )}
+            <div className="flex justify-end w-full items-center mb-2">
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   try {
                     await DeleteFolder(curr.id);
                     toast.success("Folder is Deleted");

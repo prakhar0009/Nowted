@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { getFolders, getNotesByFolder } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
-import { Trash2 } from "lucide-react";
+import { FileArchive, Star, Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import type { Note } from "../data/notes";
@@ -62,21 +62,53 @@ const Middle = () => {
               <h4 className="text-sm font-medium text-white truncate">
                 {curr.title}
               </h4>
-              <button
-                onClick={async () => {
-                  try {
-                    await DeleteNote(curr.id);
-                    toast.success("File is deleted");
-                    renderNotes();
-                    navigate(`/${folderId}`);
-                  } catch {
-                    toast.error("Internal Error");
-                  }
-                }}
-                className="text-gray-500 hover:text-red-400 transition-all ml-2"
-              >
-                <Trash2 size={20} />
-              </button>
+              <div>
+                <button
+                  // onClick={async () => {
+                  //   try {
+                  //     await DeleteNote(curr.id);
+                  //     toast.success("File is deleted");
+                  //     renderNotes();
+                  //     navigate(`/${folderId}`);
+                  //   } catch {
+                  //     toast.error("Internal Error");
+                  //   }
+                  // }}
+                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
+                >
+                  <Star size={20} />
+                </button>
+                <button
+                  // onClick={async () => {
+                  //   try {
+                  //     await DeleteNote(curr.id);
+                  //     toast.success("File is deleted");
+                  //     renderNotes();
+                  //     navigate(`/${folderId}`);
+                  //   } catch {
+                  //     toast.error("Internal Error");
+                  //   }
+                  // }}
+                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
+                >
+                  <FileArchive size={20} />
+                </button>
+                <button
+                  onClick={async () => {
+                    try {
+                      await DeleteNote(curr.id);
+                      toast.success("File is deleted");
+                      renderNotes();
+                      navigate(`/${folderId}`);
+                    } catch {
+                      toast.error("Internal Error");
+                    }
+                  }}
+                  className="text-gray-500 hover:text-red-400 transition-all ml-2"
+                >
+                  <Trash2 size={20} />
+                </button>
+              </div>
             </div>
             <div className="flex justify-between items-center text-[14px] text-primary">
               <p>{currentTime}</p>
