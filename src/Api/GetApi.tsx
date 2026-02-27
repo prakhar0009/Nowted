@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import api from "./Api";
-import type { Folder } from "../data/notes";
+import type { Folder, Note } from "../data/notes";
 
 export const getFolders = async (): Promise<Folder[]> => {
   try {
@@ -24,7 +24,7 @@ export const getRecentNotes = async (): Promise<Folder[]> => {
   }
 };
 
-export const getNotesByFolder = async (folderId: string): Promise<Folder[]> => {
+export const getNotesByFolder = async (folderId: string): Promise<Note[]> => {
   try {
     const res = await api.get("/notes", { params: { folderId } });
     return res.data.notes || [];

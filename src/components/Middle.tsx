@@ -69,7 +69,7 @@ const Middle = () => {
     }
     renderfolderName();
     renderNotes();
-  }, [folderId]);
+  }, [folderId, type]);
 
   const currentTime = new Date().toLocaleDateString();
 

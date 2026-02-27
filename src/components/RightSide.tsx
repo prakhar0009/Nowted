@@ -117,7 +117,7 @@ const RightSide = () => {
                   note.isArchived ? "text-yellow-400 fill-yellow-400" : ""
                 }
               />
-              {note.isArchived ? "Remove from Favorites" : "Add to Favorites"}
+              {note.isArchived ? "Remove from Archives" : "Add to Archives"}
             </button>
             <hr className="w-50 border border-b-overlay"></hr>
             <button className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover">
