@@ -16,16 +16,16 @@ const ToggleTheme = () => {
       {theme === "light" ? (
         <>
           <span>
-            <Lightbulb />
+            <LightbulbOff />
           </span>
-          {"Light"}
+          {"Dark"}
         </>
       ) : (
         <>
           <span>
-            <LightbulbOff />
+            <Lightbulb />
           </span>
-          {"Dark"}
+          {"Light"}
         </>
       )}
     </button>

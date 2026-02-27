@@ -45,3 +45,14 @@ export const getNoteById = async (id: string): Promise<string | null> => {
     return null;
   }
 };
+
+export const getDeletedNotes = async () => {
+  try {
+    const res = await api.get(`/notes?deleted=true`);
+    return res.data.notes;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+    return [];
+  }
+};

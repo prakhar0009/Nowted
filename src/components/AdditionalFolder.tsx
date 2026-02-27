@@ -1,4 +1,5 @@
 import { FolderArchive, Star, Trash } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
 const AdditionalFolder = () => {
   return (
@@ -9,24 +10,35 @@ const AdditionalFolder = () => {
         </h3>
       </div>
       <ul className="flex flex-col gap-3">
-        <li className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2">
+        <NavLink
+          to="/additional/favorite"
+          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+        >
           <span>
             <Star />
           </span>
-          Favorite
-        </li>
-        <li className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2">
+          {"Favorite"}
+        </NavLink>
+
+        <NavLink
+          to="/additional/trash"
+          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+        >
           <span>
             <Trash />
           </span>
-          Trash
-        </li>
-        <li className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2">
+          {"Trash"}
+        </NavLink>
+
+        <NavLink
+          to="/additional/archive"
+          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+        >
           <span>
             <FolderArchive />
           </span>
-          Archived Notes
-        </li>
+          {"Archived Notes"}
+        </NavLink>
       </ul>
     </div>
   );

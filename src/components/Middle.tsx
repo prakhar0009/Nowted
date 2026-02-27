@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { getFolders, getNotesByFolder } from "../Api/GetApi";
+import { getFolders, getNotesByFolder, getDeletedNotes } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
-import { Trash2 } from "lucide-react";
+import { Trash, Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import type { Note } from "../data/notes";
@@ -9,10 +9,15 @@ import type { Note } from "../data/notes";
 const Middle = () => {
   const [notes, setnotes] = useState<Note[]>([]);
   const [folderName, setfolderName] = useState<string>("");
-  const { folderId } = useParams<{ folderId: string }>();
+  const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
 
   const renderNotes = async () => {
+    if (type === "trash") {
+      const res = await getDeletedNotes();
+      setnotes(res);
+      return;
+    }
     if (!folderId) return;
     const res = await getNotesByFolder(folderId);
     setnotes(res);
@@ -26,6 +31,11 @@ const Middle = () => {
   };
 
   useEffect(() => {
+    if (type === "trash") {
+      setfolderName("Trash");
+      renderNotes();
+      return;
+    }
     if (!folderId) {
       setnotes([]);
       setfolderName("");
@@ -52,7 +62,12 @@ const Middle = () => {
         {notes.map((curr) => (
           <NavLink
             key={curr.id}
-            to={`/${folderId}/${curr.id}`}
+            to={
+              type === "trash"
+                ? `/additional/trash/${curr.id}`
+                : `/${folderId}/${curr.id}`
+            }
+            // to={}
             className={({ isActive }) =>
               `w-full p-5 rounded-xl border border-middle-active/5 cursor-pointer block
               ${isActive ? "bg-middle-active" : "bg-secondary-hover hover:bg-middle-active/5"} hover:shadow-lg hover:shadow-primary-hover`

@@ -10,6 +10,8 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/:folderId" element={<Home />} />
           <Route path="/:folderId/:noteId" element={<Home />} />
+          <Route path="/additional/:type" element={<Home />} />
+          <Route path="/additional/:type/:noteId" element={<Home />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>

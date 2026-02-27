@@ -42,7 +42,6 @@ const NewNote = () => {
         </div>
       </div>
 
-      {/* Implemented: Conditional swap between Search Bar and New Note Button */}
       {search ? (
         <input
           autoFocus
