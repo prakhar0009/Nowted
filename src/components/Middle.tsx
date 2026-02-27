@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
-import { getFolders, getNotesByFolder, getDeletedNotes } from "../Api/GetApi";
+import {
+  getFolders,
+  getNotesByFolder,
+  getDeletedNotes,
+  getFavoriteNotes,
+  getArchiveNotes,
+} from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
-import { Trash, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import type { Note } from "../data/notes";
@@ -15,6 +21,16 @@ const Middle = () => {
   const renderNotes = async () => {
     if (type === "trash") {
       const res = await getDeletedNotes();
+      setnotes(res);
+      return;
+    }
+    if (type === "favorite") {
+      const res = await getFavoriteNotes();
+      setnotes(res);
+      return;
+    }
+    if (type === "archive") {
+      const res = await getArchiveNotes();
       setnotes(res);
       return;
     }
@@ -36,6 +52,16 @@ const Middle = () => {
       renderNotes();
       return;
     }
+    if (type === "favorite") {
+      setfolderName("Favorite");
+      renderNotes();
+      return;
+    }
+    if (type === "archive") {
+      setfolderName("Archive");
+      renderNotes();
+      return;
+    }
     if (!folderId) {
       setnotes([]);
       setfolderName("");
@@ -52,7 +78,13 @@ const Middle = () => {
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-text">
-            {folderId ? folderName : "Select Folder"}
+            {folderId
+              ? folderName
+              : type === "trash"
+                ? "Trash"
+                : type === "favorite"
+                  ? "Favorite"
+                  : "Archived"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
@@ -65,12 +97,15 @@ const Middle = () => {
             to={
               type === "trash"
                 ? `/additional/trash/${curr.id}`
-                : `/${folderId}/${curr.id}`
+                : type === "favorite"
+                  ? `/additional/favorite/${curr.id}`
+                  : type === "archive"
+                    ? `/additional/archive/${curr.id}`
+                    : `/${folderId}/${curr.id}`
             }
-            // to={}
             className={({ isActive }) =>
               `w-full p-5 rounded-xl border border-middle-active/5 cursor-pointer block
-              ${isActive ? "bg-middle-active" : "bg-secondary-hover hover:bg-middle-active/5"} hover:shadow-lg hover:shadow-primary-hover`
+              ${isActive ? "bg-middle-active" : "bg-secondary-hover hover:bg-middle-active/5"} hover:shadow-lg hover:shadow-primary-hover duration-400 hover:translate-y-1`
             }
           >
             <div className="flex justify-between items-center mb-2">

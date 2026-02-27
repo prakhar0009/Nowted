@@ -6,27 +6,43 @@ import {
   Star,
   FolderArchive,
   Trash,
+  History,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
+import { archiveNote, favNote } from "../Api/PutApi";
 
 const RightSide = () => {
-  const { noteId } = useParams();
+  const { noteId, type } = useParams<{ noteId?: string; type?: string }>();
   const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
 
-  const [editNote, seteditNote] = useState<string | null>(null);
-  const [tempNote, settempNote] = useState("");
+  // const [editNote, seteditNote] = useState<string | null>(null);
+  // const [tempNote, settempNote] = useState("");
+
+  const toggleFav = async () => {
+    if (!note) return;
+    const newValue = !note.isFavorite;
+    await favNote(note.id, newValue);
+    setnote({ ...note, isFavorite: newValue });
+  };
+
+  const toggleArchive = async () => {
+    if (!note) return;
+    const newValue = !note.isArchived;
+    await archiveNote(note.id, newValue);
+    setnote({ ...note, isArchived: newValue });
+  };
 
   const loadNote = async () => {
     if (!noteId) return;
     const res = await getNoteById(noteId);
     setnote(res);
+    console.log("res", res);
   };
 
   useEffect(() => {
-    // const handleOverlay = ;
     loadNote();
   }, [noteId]);
 
@@ -42,6 +58,24 @@ const RightSide = () => {
           create a new note to add to your collection.
         </p>
       </div>
+    );
+  }
+
+  if (type === "trash") {
+    return (
+      <section className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
+        <History size={90} strokeWidth={0.5} />
+        <h1 className="text-3xl font-medium">Restore "{note.title}"</h1>
+        <p className="text-center text-background-700">
+          Don't want to lose this note? It's not too late! Just click the
+          'Restore' <br /> button and it will be added back to your list. It's
+          that simple.
+        </p>
+
+        <button className="bg-primary-hover text-white rounded-md py-2 px-8 cursor-pointer">
+          Restore
+        </button>
+      </section>
     );
   }
 
@@ -62,13 +96,28 @@ const RightSide = () => {
         />
         {overlay && (
           <div className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-overlay text-text">
-            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
-              <Star />
-              {"Add to Favorites"}
+            <button
+              onClick={toggleFav}
+              className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
+            >
+              <Star
+                className={
+                  note.isFavorite ? "text-yellow-400 fill-yellow-400" : ""
+                }
+              />
+              {note.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
-            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover">
-              <FolderArchive />
-              {"Archived"}
+
+            <button
+              onClick={toggleArchive}
+              className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
+            >
+              <FolderArchive
+                className={
+                  note.isArchived ? "text-yellow-400 fill-yellow-400" : ""
+                }
+              />
+              {note.isArchived ? "Remove from Favorites" : "Add to Favorites"}
             </button>
             <hr className="w-50 border border-b-overlay"></hr>
             <button className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover">

@@ -28,3 +28,23 @@ export const putNotes = async (
     else toast.error("Internal Error");
   }
 };
+
+export const favNote = async (id: string, value: boolean) => {
+  try {
+    const res = await api.patch(`/notes/${id}`, { isFavorite: value });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+  }
+};
+
+export const archiveNote = async (id: string, value: boolean) => {
+  try {
+    const res = await api.patch(`/notes/${id}`, { isArchived: value });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Intenal Error");
+  }
+};

@@ -56,3 +56,25 @@ export const getDeletedNotes = async () => {
     return [];
   }
 };
+
+export const getFavoriteNotes = async () => {
+  try {
+    const res = await api.get(`/notes?favorite=true`);
+    return res.data.notes;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+    return [];
+  }
+};
+
+export const getArchiveNotes = async () => {
+  try {
+    const res = await api.get(`/notes?archived=true`);
+    return res.data.notes;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+    return [];
+  }
+};
