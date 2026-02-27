@@ -20,6 +20,7 @@ const NewFolder = () => {
   const render = async () => {
     const data = await getFolders();
     setfolder(data);
+    console.log(data);
   };
 
   useEffect(() => {

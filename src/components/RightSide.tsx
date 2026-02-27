@@ -11,15 +11,15 @@ import {
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
-import { archiveNote, favNote } from "../Api/PutApi";
+import { archiveNote, favNote, putNotes } from "../Api/PutApi";
 
 const RightSide = () => {
   const { noteId, type } = useParams<{ noteId?: string; type?: string }>();
   const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
 
-  // const [editNote, seteditNote] = useState<string | null>(null);
-  // const [tempNote, settempNote] = useState("");
+  const [editNote, seteditNote] = useState<string | null>(null);
+  const [tempNote, settempNote] = useState("");
 
   const toggleFav = async () => {
     if (!note) return;
@@ -39,7 +39,6 @@ const RightSide = () => {
     if (!noteId) return;
     const res = await getNoteById(noteId);
     setnote(res);
-    console.log("res", res);
   };
 
   useEffect(() => {
@@ -150,10 +149,39 @@ const RightSide = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto hide-scrollbar">
-        <p className="text-secondary leading-relaxed text-base ">
-          {note.content}
-        </p>
+      <div className="flex-1 overflow-y-auto w-full hide-scrollbar">
+        {editNote === note.id ? (
+          <textarea
+            value={tempNote}
+            onKeyDown={async (e) => {
+              if (e.key === "Escape") seteditNote(null);
+              if (e.key === "Enter") {
+                await putNotes(note.id, note.title, tempNote);
+                setnote({ ...note, content: tempNote });
+                seteditNote(null);
+              }
+            }}
+            onChange={(e) => settempNote(e.target.value)}
+            onBlur={async () => {
+              await putNotes(note.id, note.title, tempNote);
+              setnote({ ...note, content: tempNote });
+              seteditNote(null);
+            }}
+            autoFocus
+            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-screen"
+            autoSave=""
+          ></textarea>
+        ) : (
+          <p
+            onDoubleClick={() => {
+              seteditNote(note.id);
+              settempNote(note.content);
+            }}
+            className="text-secondary leading-relaxed text-base cursor-text"
+          >
+            {note.content}
+          </p>
+        )}
       </div>
     </div>
   );

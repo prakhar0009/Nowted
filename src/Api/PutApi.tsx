@@ -12,13 +12,12 @@ export const putFolders = async (folderId: string, folderName: string) => {
 };
 
 export const putNotes = async (
-  folderId: string,
+  noteId: string,
   title: string,
   content: string,
 ) => {
   try {
-    const res = await api.patch(`/notes/${folderId}`, {
-      folderId,
+    const res = await api.patch(`/notes/${noteId}`, {
       title,
       content,
     });
@@ -45,6 +44,6 @@ export const archiveNote = async (id: string, value: boolean) => {
     return res.data;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
-    else toast.error("Intenal Error");
+    else toast.error("Internal Error");
   }
 };
