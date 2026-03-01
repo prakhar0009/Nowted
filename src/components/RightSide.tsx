@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
-import { archiveNote, favNote, putNotes } from "../Api/PutApi";
+import { archiveNote, favNote, putNotes, restoreNote } from "../Api/PutApi";
 import { useNavigate } from "react-router-dom";
 import { DeleteNote } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
@@ -78,6 +78,18 @@ const RightSide = () => {
     }
   };
 
+  const handleRestore = async () => {
+    if (!note) return;
+    try {
+      await restoreNote(note.id);
+      toast.success("Note Restored Successfully");
+      navigate(`/${note.folderId}/${note.id}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error(`Internal Error`);
+    }
+  };
+
   const loadNote = async () => {
     if (!noteId) return;
     const res = await getNoteById(noteId);
@@ -114,7 +126,10 @@ const RightSide = () => {
           that simple.
         </p>
 
-        <button className="bg-primary-hover text-white rounded-md py-2 px-8 cursor-pointer">
+        <button
+          className="bg-primary-hover text-white rounded-md py-2 px-8 cursor-pointer"
+          onClick={handleRestore}
+        >
           Restore
         </button>
       </section>

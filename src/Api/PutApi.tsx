@@ -47,3 +47,13 @@ export const archiveNote = async (id: string, value: boolean) => {
     else toast.error("Internal Error");
   }
 };
+
+export const restoreNote = async (id: string) => {
+  try {
+    const res = await api.patch(`/notes/${id}`, { isDeleted: false });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+  }
+};
