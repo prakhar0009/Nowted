@@ -1,6 +1,6 @@
 import { Plus, X, Search } from "lucide-react";
 import { createNote } from "../Api/PostApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
 import toast from "react-hot-toast";
@@ -30,6 +30,22 @@ const NewNote = () => {
       else toast.error("Internal Error");
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setoverlay(false);
+      }
+    };
+
+    if (overlay) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [overlay]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -74,8 +90,14 @@ const NewNote = () => {
       )}
 
       {overlay && (
-        <div className="fixed inset-0 bg-overlaybg flex items-center justify-center z-50">
-          <div className="bg-overlay rounded-xl p-6 w-[90%] max-w-md flex flex-col gap-4">
+        <div
+          onClick={() => setoverlay(false)}
+          className="fixed inset-0 bg-overlaybg flex items-center justify-center z-50"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-overlay rounded-xl p-6 w-[90%] max-w-md flex flex-col gap-4"
+          >
             <div className="flex justify-between items-center">
               <h2 className="text-text font-semibold text-lg">New Note</h2>
               <button

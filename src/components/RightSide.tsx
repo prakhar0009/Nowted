@@ -31,6 +31,16 @@ const RightSide = () => {
 
   // const { folderId } = useParams();
 
+  const loadNote = async () => {
+    if (!noteId) return;
+    try {
+      const res = await getNoteById(noteId);
+      setnote(res);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
+  };
+
   const toggleFav = async () => {
     if (!note) return;
     try {
@@ -80,16 +90,42 @@ const RightSide = () => {
     }
   };
 
-  const loadNote = async () => {
-    if (!noteId) return;
-    const res = await getNoteById(noteId);
-    setnote(res);
+  const handleSaveContent = async () => {
+    if (tempNote === note.content) {
+      seteditNote(null);
+      return;
+    }
+    try {
+      await putNotes(note.id, note.title, tempNote);
+      setnote({ ...note, content: tempNote });
+      toast.success("Note saved");
+      seteditNote(null);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error("Internal Error");
+    }
   };
 
   useEffect(() => {
     loadNote();
     setoverlay(false);
   }, [noteId]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setoverlay(false);
+      }
+    };
+
+    if (overlay) {
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [overlay]);
 
   if (!noteId || !note) {
     return (
@@ -143,7 +179,10 @@ const RightSide = () => {
           }}
         />
         {overlay && (
-          <div className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-overlay text-text">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-overlay text-text"
+          >
             <button
               onClick={toggleFav}
               className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
@@ -203,44 +242,25 @@ const RightSide = () => {
         {editNote === note.id ? (
           <textarea
             value={tempNote}
-            onKeyDown={async (e) => {
-              if (e.key === "Escape") seteditNote(null);
-              if (e.key === "Enter") {
-                try {
-                  await putNotes(note.id, note.title, tempNote);
-                  setnote({ ...note, content: tempNote });
-                  seteditNote(null);
-                  toast.success("Note saved successfully");
-                } catch (e) {
-                  if (e instanceof Error) console.log(e.message);
-                  else toast.error("Failed to save note");
-                }
-              }
-            }}
-            onChange={(e) => settempNote(e.target.value)}
-            onBlur={async () => {
-              if (tempNote !== note.content) {
-                try {
-                  await putNotes(note.id, note.title, tempNote);
-                  setnote({ ...note, content: tempNote });
-                  toast.success("Note saved"); // Toast for Blur save
-                } catch (e) {
-                  if (e instanceof Error) console.log(e.message);
-                  else toast.error("Failed to save changes");
-                }
-              }
-              seteditNote(null);
-            }}
             autoFocus
-            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-screen"
-          ></textarea>
+            onChange={(e) => settempNote(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") seteditNote(null);
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSaveContent();
+              }
+            }}
+            onBlur={handleSaveContent}
+            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-full"
+          />
         ) : (
           <p
             onDoubleClick={() => {
               seteditNote(note.id);
               settempNote(note.content);
             }}
-            className="text-secondary leading-relaxed text-base cursor-text"
+            className="text-secondary leading-relaxed text-base cursor-text whitespace-pre-wrap"
           >
             {note.content}
           </p>
