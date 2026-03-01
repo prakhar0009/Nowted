@@ -12,27 +12,70 @@ import { useEffect, useState } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
 import { archiveNote, favNote, putNotes } from "../Api/PutApi";
+import { useNavigate } from "react-router-dom";
+import { DeleteNote } from "../Api/DeleteApi";
+import toast from "react-hot-toast";
 
 const RightSide = () => {
-  const { noteId, type } = useParams<{ noteId?: string; type?: string }>();
+  const { noteId, type, folderId } = useParams<{
+    noteId?: string;
+    type?: string;
+    folderId?: string;
+  }>();
   const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
 
   const [editNote, seteditNote] = useState<string | null>(null);
   const [tempNote, settempNote] = useState("");
+  const navigate = useNavigate();
+
+  // const { noteId, type , } = useParams();
 
   const toggleFav = async () => {
     if (!note) return;
-    const newValue = !note.isFavorite;
-    await favNote(note.id, newValue);
-    setnote({ ...note, isFavorite: newValue });
+    try {
+      const newValue = !note.isFavorite;
+      await favNote(note.id, newValue);
+      setnote({ ...note, isFavorite: newValue });
+      if (newValue) {
+        toast.success("Marked as Favorite");
+      } else {
+        toast.success("Removed from Favorites");
+      }
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error(`Internal Error`);
+    }
   };
 
   const toggleArchive = async () => {
     if (!note) return;
-    const newValue = !note.isArchived;
-    await archiveNote(note.id, newValue);
-    setnote({ ...note, isArchived: newValue });
+    try {
+      const newValue = !note.isArchived;
+      await archiveNote(note.id, newValue);
+      setnote({ ...note, isArchived: newValue });
+      if (newValue) {
+        toast.success("Marked as Archived");
+      } else {
+        toast.success("Removed from Archives");
+      }
+      setoverlay(false);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error(`Internal Error`);
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      await DeleteNote(note.id);
+      toast.success("Note moved to Trash");
+      if (type) navigate(`/additional/${type}`);
+      else navigate(`/${folderId}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error(`Internal Error`);
+    }
   };
 
   const loadNote = async () => {
@@ -112,14 +155,15 @@ const RightSide = () => {
               className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
             >
               <FolderArchive
-                className={
-                  note.isArchived ? "text-yellow-400 fill-yellow-400" : ""
-                }
+                className={note.isArchived ? "text-blue-400 fill-blue-400" : ""}
               />
               {note.isArchived ? "Remove from Archives" : "Add to Archives"}
             </button>
             <hr className="w-50 border border-b-overlay"></hr>
-            <button className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover">
+            <button
+              className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover"
+              onClick={handleDelete}
+            >
               <Trash />
               {"Delete"}
             </button>
