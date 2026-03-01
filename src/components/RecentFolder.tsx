@@ -30,7 +30,14 @@ const RecentFolder = () => {
           <NavLink
             to={`/${curr.folderId}/${curr.id}`}
             key={curr.id}
-            className="px-1 py-2.5 rounded-md flex items-center gap-5 cursor-pointer text-primary hover:bg-primary-hover hover:text-secondary"
+            className={({ isActive }) =>
+              `px-1 py-2.5 rounded-md flex items-center gap-5 cursor-pointer duration-200
+              ${
+                isActive
+                  ? "bg-secondary-hover text-secondary shadow-sm"
+                  : "text-primary hover:bg-primary-hover hover:text-secondary"
+              }`
+            }
           >
             <span>
               <FileText />

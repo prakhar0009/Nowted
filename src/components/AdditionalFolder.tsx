@@ -12,32 +12,50 @@ const AdditionalFolder = () => {
       <ul className="flex flex-col gap-3">
         <NavLink
           to="/additional/favorite"
-          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+          className={({ isActive }) =>
+            `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200 ${
+              isActive
+                ? "text-yellow-400 bg-yellow-400/10 font-semibold"
+                : "text-primary hover:bg-secondary-hover hover:text-secondary"
+            }`
+          }
         >
           <span>
-            <Star />
+            <Star size={18} />
           </span>
-          {"Favorite"}
+          Favorite
         </NavLink>
 
         <NavLink
           to="/additional/trash"
-          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+          className={({ isActive }) =>
+            `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200 ${
+              isActive
+                ? "text-red-400 bg-red-400/10 font-semibold"
+                : "text-primary hover:bg-secondary-hover hover:text-secondary"
+            }`
+          }
         >
           <span>
-            <Trash />
+            <Trash size={18} />
           </span>
-          {"Trash"}
+          Trash
         </NavLink>
 
         <NavLink
           to="/additional/archive"
-          className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+          className={({ isActive }) =>
+            `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200 ${
+              isActive
+                ? "text-blue-400 bg-blue-400/10 font-semibold"
+                : "text-primary hover:bg-secondary-hover hover:text-secondary"
+            }`
+          }
         >
           <span>
-            <FolderArchive />
+            <FolderArchive size={18} />
           </span>
-          {"Archived Notes"}
+          Archived Notes
         </NavLink>
       </ul>
     </div>

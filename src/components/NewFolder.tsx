@@ -99,7 +99,14 @@ const NewFolder = () => {
       <ul className="flex flex-col gap-3 min-h-0 overflow-y-auto hide-scrollbar">
         {folder?.map((curr) => (
           <NavLink
-            className="flex items-center gap-5 text-sm text-primary hover:bg-secondary-hover hover:text-secondary cursor-pointer rounded px-1 py-2"
+            className={({ isActive }) =>
+              `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200
+              ${
+                isActive || editFolder === curr.id
+                  ? "bg-secondary-hover text-secondary"
+                  : "text-primary hover:bg-primary-hover hover:text-secondary"
+              }`
+            }
             key={curr.id}
             to={`/${curr.id}/${curr.name}`}
             onDoubleClick={(e) => {
