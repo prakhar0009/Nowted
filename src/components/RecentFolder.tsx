@@ -8,8 +8,12 @@ const RecentFolder = () => {
   const [recent, setRecent] = useState<Note[]>([]);
 
   const render = async () => {
-    const data = await getRecentNotes();
-    setRecent(data || []);
+    try {
+      const data = await getRecentNotes();
+      setRecent(data || []);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
   };
 
   useEffect(() => {

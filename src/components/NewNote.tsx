@@ -3,6 +3,7 @@ import { createNote } from "../Api/PostApi";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
+import toast from "react-hot-toast";
 
 const NewNote = () => {
   const [overlay, setoverlay] = useState(false);
@@ -15,13 +16,19 @@ const NewNote = () => {
   const [searchBar, setSearchBar] = useState("");
 
   const handleNewNote = async () => {
-    if (!folderId) return alert("Folder not selected");
-    if (title.trim() === "") return alert("File name can't be empty");
-    const res = await createNote(folderId, title, message);
-    settitle("");
-    setoverlay(false);
-    setmessage("");
-    navigate(`/${folderId}/${res.note.id}`);
+    if (!folderId) return toast.error(`Select a folder first!`);
+    if (title.trim() === "") return toast.error("File name can't be empty");
+    try {
+      const res = await createNote(folderId, title, message);
+      toast.success("Note added successfully");
+      settitle("");
+      setoverlay(false);
+      setmessage("");
+      navigate(`/${folderId}/${res.note.id}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error("Internal Error");
+    }
   };
 
   return (

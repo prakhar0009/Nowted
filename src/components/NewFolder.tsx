@@ -18,9 +18,13 @@ const NewFolder = () => {
   const navigate = useNavigate();
 
   const render = async () => {
-    const data = await getFolders();
-    setfolder(data);
-    console.log(data);
+    try {
+      const data = await getFolders();
+      setfolder(data || []);
+      console.log(data);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
   };
 
   useEffect(() => {
@@ -29,10 +33,14 @@ const NewFolder = () => {
 
   const handleNewFolder = async () => {
     if (fName.trim() === "") return;
-    await createFolder(fName);
-    setfName("");
-    setisFolder(false);
-    render();
+    try {
+      await createFolder(fName);
+      setfName("");
+      setisFolder(false);
+      render();
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
   };
 
   const handleRenameFolder = async (id: string) => {
@@ -40,11 +48,15 @@ const NewFolder = () => {
       seteditFolder(null);
       return;
     }
-
-    await putFolders(id, tempFName);
-    seteditFolder(null);
-    render();
-    navigate(`/${id}/${tempFName}`);
+    try {
+      await putFolders(id, tempFName);
+      seteditFolder(null);
+      render();
+      navigate(`/${id}/${tempFName}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      seteditFolder(null);
+    }
   };
 
   return (

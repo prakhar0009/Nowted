@@ -19,34 +19,43 @@ const Middle = () => {
   const navigate = useNavigate();
 
   const renderNotes = async () => {
-    if (type === "trash") {
-      const res = await getDeletedNotes();
+    try {
+      if (type === "trash") {
+        const res = await getDeletedNotes();
+        setnotes(res);
+        return;
+      }
+      if (type === "favorite") {
+        const res = await getFavoriteNotes();
+        setnotes(res);
+        return;
+      }
+      if (type === "archive") {
+        const res = await getArchiveNotes();
+        setnotes(res);
+        return;
+      }
+      if (!folderId) return;
+      const res = await getNotesByFolder(folderId);
       setnotes(res);
-      return;
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
     }
-    if (type === "favorite") {
-      const res = await getFavoriteNotes();
-      setnotes(res);
-      return;
-    }
-    if (type === "archive") {
-      const res = await getArchiveNotes();
-      setnotes(res);
-      return;
-    }
-    if (!folderId) return;
-    const res = await getNotesByFolder(folderId);
-    setnotes(res);
   };
 
   const renderfolderName = async () => {
-    const folders = await getFolders();
-    if (!Array.isArray(folders)) return;
-    const currFolder = folders.find((f) => f.id === folderId);
-    if (currFolder) setfolderName(currFolder.name);
+    try {
+      const folders = await getFolders();
+      if (!Array.isArray(folders)) return;
+      const currFolder = folders.find((f) => f.id === folderId);
+      if (currFolder) setfolderName(currFolder.name);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
   };
 
   useEffect(() => {
+    setnotes([]);
     if (type === "trash") {
       setfolderName("Trash");
       renderNotes();
@@ -70,8 +79,6 @@ const Middle = () => {
     renderfolderName();
     renderNotes();
   }, [folderId, type]);
-
-  const currentTime = new Date().toLocaleDateString();
 
   return (
     <div className="w-full h-full bg-middleScreen flex flex-col">
@@ -129,7 +136,7 @@ const Middle = () => {
               </button>
             </div>
             <div className="flex justify-between items-center text-[14px] text-primary">
-              <p>{currentTime}</p>
+              <p>{new Date(curr.createdAt).toLocaleDateString("en-GB")}</p>
               <p className="truncate ml-3 opacity-70">{curr.preview}</p>
             </div>
           </NavLink>

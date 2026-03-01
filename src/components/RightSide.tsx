@@ -29,7 +29,7 @@ const RightSide = () => {
   const [tempNote, settempNote] = useState("");
   const navigate = useNavigate();
 
-  // const { noteId, type , } = useParams();
+  // const { folderId } = useParams();
 
   const toggleFav = async () => {
     if (!note) return;
@@ -37,14 +37,9 @@ const RightSide = () => {
       const newValue = !note.isFavorite;
       await favNote(note.id, newValue);
       setnote({ ...note, isFavorite: newValue });
-      if (newValue) {
-        toast.success("Marked as Favorite");
-      } else {
-        toast.success("Removed from Favorites");
-      }
+      toast.success(newValue ? "Marked as Favorite" : "Removed from Favorite");
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
-      else toast.error(`Internal Error`);
     }
   };
 
@@ -54,15 +49,11 @@ const RightSide = () => {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
       setnote({ ...note, isArchived: newValue });
-      if (newValue) {
-        toast.success("Marked as Archived");
-      } else {
-        toast.success("Removed from Archives");
-      }
+      toast.success(newValue ? "Marked as Archived" : "Removed from Archived");
       setoverlay(false);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
-      else toast.error(`Internal Error`);
+      seteditNote(null);
     }
   };
 
@@ -79,7 +70,6 @@ const RightSide = () => {
   };
 
   const handleRestore = async () => {
-    if (!note) return;
     try {
       await restoreNote(note.id);
       toast.success("Note Restored Successfully");

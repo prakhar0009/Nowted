@@ -5,6 +5,7 @@ export type Note = {
   folderId: string;
   isFavorite: boolean;
   isArchived: boolean;
+  isDeleted: boolean;
   createdAt: string;
   preview: string;
   folder: { name: string };
