@@ -32,9 +32,13 @@ const NewFolder = () => {
   }, []);
 
   const handleNewFolder = async () => {
-    if (fName.trim() === "") return;
+    if (fName.trim() === "") {
+      toast.error(`Folder name is required`);
+      return;
+    }
     try {
       await createFolder(fName);
+      toast.success(`Folder created`);
       setfName("");
       setisFolder(false);
       render();
@@ -46,10 +50,12 @@ const NewFolder = () => {
   const handleRenameFolder = async (id: string) => {
     if (tempFName.trim() === "") {
       seteditFolder(null);
+      toast.error(`Folder name is required`);
       return;
     }
     try {
       await putFolders(id, tempFName);
+      toast.success(`Folder renamed`);
       seteditFolder(null);
       render();
       navigate(`/${id}/${tempFName}`);
@@ -126,6 +132,7 @@ const NewFolder = () => {
               <button
                 onClick={async (e) => {
                   e.preventDefault();
+                  e.stopPropagation();
                   try {
                     await DeleteFolder(curr.id);
                     toast.success("Folder is Deleted");

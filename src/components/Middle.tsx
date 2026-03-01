@@ -125,7 +125,7 @@ const Middle = () => {
                     await DeleteNote(curr.id);
                     toast.success("File is deleted");
                     renderNotes();
-                    navigate(`/${folderId}`);
+                    navigate(type ? `/additional/${type}` : `/${folderId}`);
                   } catch {
                     toast.error("Internal Error");
                   }

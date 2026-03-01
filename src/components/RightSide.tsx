@@ -88,6 +88,7 @@ const RightSide = () => {
 
   useEffect(() => {
     loadNote();
+    setoverlay(false);
   }, [noteId]);
 
   if (!noteId || !note) {
@@ -205,20 +206,33 @@ const RightSide = () => {
             onKeyDown={async (e) => {
               if (e.key === "Escape") seteditNote(null);
               if (e.key === "Enter") {
-                await putNotes(note.id, note.title, tempNote);
-                setnote({ ...note, content: tempNote });
-                seteditNote(null);
+                try {
+                  await putNotes(note.id, note.title, tempNote);
+                  setnote({ ...note, content: tempNote });
+                  seteditNote(null);
+                  toast.success("Note saved successfully");
+                } catch (e) {
+                  if (e instanceof Error) console.log(e.message);
+                  else toast.error("Failed to save note");
+                }
               }
             }}
             onChange={(e) => settempNote(e.target.value)}
             onBlur={async () => {
-              await putNotes(note.id, note.title, tempNote);
-              setnote({ ...note, content: tempNote });
+              if (tempNote !== note.content) {
+                try {
+                  await putNotes(note.id, note.title, tempNote);
+                  setnote({ ...note, content: tempNote });
+                  toast.success("Note saved"); // Toast for Blur save
+                } catch (e) {
+                  if (e instanceof Error) console.log(e.message);
+                  else toast.error("Failed to save changes");
+                }
+              }
               seteditNote(null);
             }}
             autoFocus
             className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-screen"
-            autoSave=""
           ></textarea>
         ) : (
           <p
