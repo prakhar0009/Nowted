@@ -2,10 +2,9 @@ import { FileText } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getRecentNotes } from "../Api/GetApi";
 import { NavLink } from "react-router-dom";
-import type { Note } from "../data/notes";
 
 const RecentFolder = () => {
-  const [recent, setRecent] = useState<Note[]>([]);
+  const [recent, setRecent] = useState<any[]>([]);
 
   const render = async () => {
     try {
