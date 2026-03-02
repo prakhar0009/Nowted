@@ -48,7 +48,7 @@ export const getNoteById = async (id: string): Promise<string | null> => {
 
 export const getDeletedNotes = async () => {
   try {
-    const res = await api.get(`/notes?deleted=true`);
+    const res = await api.get(`/notes?deleted=true&limit=1000`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -59,7 +59,7 @@ export const getDeletedNotes = async () => {
 
 export const getFavoriteNotes = async () => {
   try {
-    const res = await api.get(`/notes?favorite=true`);
+    const res = await api.get(`/notes?favorite=true&limit=1000`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -70,7 +70,7 @@ export const getFavoriteNotes = async () => {
 
 export const getArchiveNotes = async () => {
   try {
-    const res = await api.get(`/notes?archived=true`);
+    const res = await api.get(`/notes?archived=true&limit=1000`);
     return res.data.notes;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);

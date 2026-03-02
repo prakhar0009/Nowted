@@ -1,6 +1,6 @@
 import { Plus, X, Search } from "lucide-react";
 import { createNote } from "../Api/PostApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
 import toast from "react-hot-toast";
@@ -30,22 +30,6 @@ const NewNote = () => {
       else toast.error("Internal Error");
     }
   };
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setoverlay(false);
-      }
-    };
-
-    if (overlay) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [overlay]);
 
   return (
     <div className="flex flex-col gap-6">

@@ -50,7 +50,7 @@ export const archiveNote = async (id: string, value: boolean) => {
 
 export const restoreNote = async (id: string) => {
   try {
-    const res = await api.patch(`/notes/${id}`, { isDeleted: false });
+    const res = await api.post(`/notes/${id}/restore`);
     return res.data;
   } catch (e) {
     if (e instanceof Error) console.log(e.message);

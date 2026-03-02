@@ -17,7 +17,7 @@ import { DeleteNote } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
 
 const RightSide = () => {
-  const { noteId, type, folderId } = useParams<{
+  const { noteId, type } = useParams<{
     noteId?: string;
     type?: string;
     folderId?: string;
@@ -61,6 +61,13 @@ const RightSide = () => {
       setnote({ ...note, isArchived: newValue });
       toast.success(newValue ? "Marked as Archived" : "Removed from Archived");
       setoverlay(false);
+      if (newValue) {
+        if (type === "favorite") {
+          navigate("/additional/favorite");
+        } else {
+          navigate(`/${note.folderId}`);
+        }
+      }
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       seteditNote(null);
@@ -68,11 +75,18 @@ const RightSide = () => {
   };
 
   const handleDelete = async () => {
+    if (!note) return;
     try {
       await DeleteNote(note.id);
       toast.success("Note moved to Trash");
-      if (type) navigate(`/additional/${type}`);
-      else navigate(`/${folderId}`);
+      setoverlay(false);
+      if (type === "archive") {
+        navigate("/additional/archive");
+      } else if (type === "favorite") {
+        navigate("/additional/favorite");
+      } else {
+        navigate(`/${note.folderId}`);
+      }
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error(`Internal Error`);
@@ -80,13 +94,20 @@ const RightSide = () => {
   };
 
   const handleRestore = async () => {
+    if (!note) return;
     try {
-      await restoreNote(note.id);
-      toast.success("Note Restored Successfully");
-      navigate(`/${note.folderId}/${note.id}`);
+      const updateNote = await restoreNote(note.id);
+      if (updateNote) {
+        // console.log(updateNote);
+
+        toast.success("Note Restored Successfully");
+        navigate(`/${note.folderId}/${note.id}`);
+      }
     } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-      else toast.error(`Internal Error`);
+      if (e instanceof Error) {
+        console.log(e.message);
+        toast.error("Failed to restore");
+      } else toast.error(`Internal Error`);
     }
   };
 
@@ -110,22 +131,6 @@ const RightSide = () => {
     loadNote();
     setoverlay(false);
   }, [noteId]);
-
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setoverlay(false);
-      }
-    };
-
-    if (overlay) {
-      document.addEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [overlay]);
 
   if (!noteId || !note) {
     return (

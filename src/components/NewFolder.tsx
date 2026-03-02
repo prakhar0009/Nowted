@@ -21,7 +21,6 @@ const NewFolder = () => {
     try {
       const data = await getFolders();
       setfolder(data || []);
-      console.log(data);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
     }
