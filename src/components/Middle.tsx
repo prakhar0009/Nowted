@@ -1,47 +1,16 @@
-import { useEffect, useState } from "react";
-import {
-  getFolders,
-  getNotesByFolder,
-  getDeletedNotes,
-  getFavoriteNotes,
-  getArchiveNotes,
-} from "../Api/GetApi";
+import { useEffect, useState, useContext } from "react";
+import { NoteContext } from "../context/NoteContext";
+import { getFolders } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import type { Note } from "../data/notes";
 
 const Middle = () => {
-  const [notes, setnotes] = useState<Note[]>([]);
+  const { notes, setNotes, refreshNotes } = useContext(NoteContext);
   const [folderName, setfolderName] = useState<string>("");
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
-
-  const renderNotes = async () => {
-    try {
-      if (type === "trash") {
-        const res = await getDeletedNotes();
-        setnotes(res);
-        return;
-      }
-      if (type === "favorite") {
-        const res = await getFavoriteNotes();
-        setnotes(res);
-        return;
-      }
-      if (type === "archive") {
-        const res = await getArchiveNotes();
-        setnotes(res);
-        return;
-      }
-      if (!folderId) return;
-      const res = await getNotesByFolder(folderId);
-      setnotes(res);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-    }
-  };
 
   const renderfolderName = async () => {
     try {
@@ -55,30 +24,42 @@ const Middle = () => {
   };
 
   useEffect(() => {
-    setnotes([]);
-    if (type === "trash") {
-      setfolderName("Trash");
-      renderNotes();
-      return;
-    }
-    if (type === "favorite") {
-      setfolderName("Favorite");
-      renderNotes();
-      return;
-    }
-    if (type === "archive") {
-      setfolderName("Archive");
-      renderNotes();
-      return;
-    }
-    if (!folderId) {
-      setnotes([]);
-      setfolderName("");
-      return;
-    }
-    renderfolderName();
-    renderNotes();
+    const autoSelectFirstFolder = async () => {
+      if (!folderId && !type) {
+        try {
+          const folders = await getFolders();
+          if (Array.isArray(folders) && folders.length > 0) {
+            navigate(`/${folders[0].id}/${folders[0].name}`);
+          }
+        } catch (e) {
+          if (e instanceof Error) console.log(e.message);
+        }
+        return;
+      }
+
+      setNotes([]);
+
+      if (type === "trash") {
+        setfolderName("Trash");
+      } else if (type === "favorite") {
+        setfolderName("Favorite");
+      } else if (type === "archive") {
+        setfolderName("Archive");
+      } else if (folderId) {
+        renderfolderName();
+      } else {
+        setfolderName("");
+      }
+
+      refreshNotes(folderId, type);
+    };
+
+    autoSelectFirstFolder();
   }, [folderId, type]);
+
+  if (!folderId && !type) {
+    return <div className="w-full h-full bg-middleScreen" />;
+  }
 
   return (
     <div className="w-full h-full bg-middleScreen flex flex-col">
@@ -91,14 +72,16 @@ const Middle = () => {
                 ? "Trash"
                 : type === "favorite"
                   ? "Favorite"
-                  : "Archived"}
+                  : type === "archive"
+                    ? "Archived"
+                    : "Select Folder"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto px-[8%] flex flex-col gap-3 pb-7 hide-scrollbar ">
-        {notes.map((curr) => (
+        {notes.map((curr: any) => (
           <NavLink
             key={curr.id}
             to={
@@ -120,11 +103,14 @@ const Middle = () => {
                 {curr.title}
               </h4>
               <button
-                onClick={async () => {
+                onClick={async (e) => {
+                  e.preventDefault();
                   try {
                     await DeleteNote(curr.id);
+                    setNotes((prev: any[]) =>
+                      prev.filter((n) => n.id !== curr.id),
+                    );
                     toast.success("File is deleted");
-                    renderNotes();
                     navigate(type ? `/additional/${type}` : `/${folderId}`);
                   } catch {
                     toast.error("Internal Error");

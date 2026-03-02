@@ -16,16 +16,13 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const refreshNotes = async (folderId?: string, type?: string) => {
     try {
       let res = [];
-      if (type === "trash")
-        res = await getDeletedNotes(); //
-      else if (type === "favorite")
-        res = await getFavoriteNotes(); //
-      else if (type === "archive")
-        res = await getArchiveNotes(); //
-      else if (folderId) res = await getNotesByFolder(folderId); //
+      if (type === "trash") res = await getDeletedNotes();
+      else if (type === "favorite") res = await getFavoriteNotes();
+      else if (type === "archive") res = await getArchiveNotes();
+      else if (folderId) res = await getNotesByFolder(folderId);
       setNotes(res || []);
     } catch (e) {
-      console.error("Error refreshing notes:", e);
+      if (e instanceof Error) console.log(e.message);
     }
   };
 
@@ -34,7 +31,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
       const data = await getFolders();
       setFolders(data || []);
     } catch (e) {
-      console.error("Error refreshing folders:", e);
+      if (e instanceof Error) console.log(e.message);
     }
   };
 
