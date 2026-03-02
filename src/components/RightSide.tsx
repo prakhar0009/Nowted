@@ -8,16 +8,17 @@ import {
   Trash,
   History,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams } from "react-router-dom";
 import { archiveNote, favNote, putNotes, restoreNote } from "../Api/PutApi";
 import { useNavigate } from "react-router-dom";
 import { DeleteNote } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
+import { NoteContext } from "../context/NoteContext";
 
 const RightSide = () => {
-  const { noteId, type } = useParams<{
+  const { noteId, type, folderId } = useParams<{
     noteId?: string;
     type?: string;
     folderId?: string;
@@ -29,7 +30,7 @@ const RightSide = () => {
   const [tempNote, settempNote] = useState("");
   const navigate = useNavigate();
 
-  // const { folderId } = useParams();
+  const { setNotes, refreshNotes } = useContext(NoteContext);
 
   const loadNote = async () => {
     if (!noteId) return;
@@ -58,15 +59,17 @@ const RightSide = () => {
     try {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
-      setnote({ ...note, isArchived: newValue });
-      toast.success(newValue ? "Marked as Archived" : "Removed from Archived");
-      setoverlay(false);
       if (newValue) {
+        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        toast.success("Marked as Archived");
         if (type === "favorite") {
           navigate("/additional/favorite");
         } else {
           navigate(`/${note.folderId}`);
         }
+      } else {
+        setnote({ ...note, isArchived: newValue });
+        toast.success("Removed from Archived");
       }
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
@@ -78,6 +81,7 @@ const RightSide = () => {
     if (!note) return;
     try {
       await DeleteNote(note.id);
+      setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       toast.success("Note moved to Trash");
       setoverlay(false);
       if (type === "archive") {
@@ -98,8 +102,7 @@ const RightSide = () => {
     try {
       const updateNote = await restoreNote(note.id);
       if (updateNote) {
-        // console.log(updateNote);
-
+        await refreshNotes(folderId, type);
         toast.success("Note Restored Successfully");
         navigate(`/${note.folderId}/${note.id}`);
       }
@@ -121,6 +124,7 @@ const RightSide = () => {
       setnote({ ...note, content: tempNote });
       toast.success("Note saved");
       seteditNote(null);
+      refreshNotes(folderId, type);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error("Internal Error");
