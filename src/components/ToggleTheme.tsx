@@ -1,13 +1,20 @@
 import { Lightbulb, LightbulbOff } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const ToggleTheme = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light",
+  );
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, []);
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
+
   return (
     <button
       onClick={toggleTheme}

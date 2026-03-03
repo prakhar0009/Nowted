@@ -26,7 +26,7 @@ export const getRecentNotes = async (): Promise<Note[]> => {
 
 export const getNotesByFolder = async (folderId: string): Promise<Note[]> => {
   try {
-    const res = await api.get("/notes", { params: { folderId } });
+    const res = await api.get("/notes", { params: { folderId, limit: 1000 } });
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
