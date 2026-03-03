@@ -1,61 +1,41 @@
 import { useEffect, useState, useContext } from "react";
 import { NoteContext } from "../context/NoteContext";
-import { getFolders } from "../Api/GetApi";
 import { DeleteNote } from "../Api/DeleteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Middle = () => {
-  const { notes, setNotes, renderNotes } = useContext(NoteContext);
+  const { notes, setNotes, folders, renderNotes } = useContext(NoteContext);
   const [folderName, setfolderName] = useState<string>("");
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
 
-  const renderfolderName = async () => {
-    try {
-      const folders = await getFolders();
-      if (!Array.isArray(folders)) return;
-      const currFolder = folders.find((f) => f.id === folderId);
-      if (currFolder) setfolderName(currFolder.name);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-    }
-  };
-
   useEffect(() => {
-    const autoSelectFirstFolder = async () => {
-      if (!folderId && !type) {
-        try {
-          const folders = await getFolders();
-          if (Array.isArray(folders) && folders.length > 0) {
-            navigate(`/${folders[0].id}/${folders[0].name}`);
-          }
-        } catch (e) {
-          if (e instanceof Error) console.log(e.message);
-        }
-        return;
+    if (!folderId && !type) {
+      if (folders.length > 0) {
+        navigate(`/${folders[0].id}/${folders[0].name}`);
       }
+      return;
+    }
 
-      setNotes([]);
+    setNotes([]);
 
-      if (type === "trash") {
-        setfolderName("Trash");
-      } else if (type === "favorite") {
-        setfolderName("Favorite");
-      } else if (type === "archive") {
-        setfolderName("Archive");
-      } else if (folderId) {
-        renderfolderName();
-      } else {
-        setfolderName("");
-      }
+    if (type === "trash") {
+      setfolderName("Trash");
+    } else if (type === "favorite") {
+      setfolderName("Favorite");
+    } else if (type === "archive") {
+      setfolderName("Archive");
+    } else if (folderId) {
+      const currFolder = folders.find((f: any) => f.id === folderId);
+      if (currFolder) setfolderName(currFolder.name);
+    } else {
+      setfolderName("");
+    }
 
-      renderNotes(folderId, type);
-    };
-
-    autoSelectFirstFolder();
-  }, [folderId, type]);
+    renderNotes(folderId, type);
+  }, [folderId, type, folders]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;
@@ -102,24 +82,27 @@ const Middle = () => {
               <h4 className="text-sm font-medium text-text truncate">
                 {curr.title}
               </h4>
-              <button
-                onClick={async (e) => {
-                  e.preventDefault();
-                  try {
-                    await DeleteNote(curr.id);
-                    setNotes((prev: any[]) =>
-                      prev.filter((n) => n.id !== curr.id),
-                    );
-                    toast.success("File is deleted");
-                    navigate(type ? `/additional/${type}` : `/${folderId}`);
-                  } catch {
-                    toast.error("Internal Error");
-                  }
-                }}
-                className="text-primary hover:text-red-400 transition-all ml-2"
-              >
-                <Trash2 size={20} />
-              </button>
+              {type !== "trash" && (
+                <button
+                  onClick={async (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    try {
+                      await DeleteNote(curr.id);
+                      setNotes((prev: any[]) =>
+                        prev.filter((n) => n.id !== curr.id),
+                      );
+                      toast.success("File is deleted");
+                      navigate(type ? `/additional/${type}` : `/${folderId}`);
+                    } catch {
+                      toast.error("Internal Error");
+                    }
+                  }}
+                  className="text-primary hover:text-red-400 transition-all ml-2"
+                >
+                  <Trash2 size={20} />
+                </button>
+              )}
             </div>
             <div className="flex justify-between items-center text-[14px] text-primary">
               <p>{new Date(curr.createdAt).toLocaleDateString("en-GB")}</p>

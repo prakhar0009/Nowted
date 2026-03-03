@@ -26,9 +26,11 @@ const RightSide = () => {
   const [overlay, setoverlay] = useState(false);
   const [editNote, seteditNote] = useState<string | null>(null);
   const [tempNote, settempNote] = useState("");
+  const [editTitle, seteditTitle] = useState(false);
+  const [tempTitle, settempTitle] = useState("");
   const navigate = useNavigate();
 
-  const { setNotes, refreshNotes, renderRecent } = useContext(NoteContext);
+  const { setNotes, renderNotes, renderRecent } = useContext(NoteContext);
 
   const loadNote = async () => {
     if (!noteId) return;
@@ -37,6 +39,30 @@ const RightSide = () => {
       setnote(res);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
+    }
+  };
+
+  const handleRenameTitle = async () => {
+    if (tempTitle.trim() === "") {
+      seteditTitle(false);
+      toast.error("Note name is required");
+      return;
+    }
+    if (tempTitle === note.title) {
+      seteditTitle(false);
+      return;
+    }
+    try {
+      await putNotes(note.id, tempTitle, note.content);
+      setnote({ ...note, title: tempTitle });
+      setNotes((prev: any[]) =>
+        prev.map((n) => (n.id === note.id ? { ...n, title: tempTitle } : n)),
+      );
+      toast.success("Note renamed");
+      seteditTitle(false);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      seteditTitle(false);
     }
   };
 
@@ -129,7 +155,7 @@ const RightSide = () => {
       setnote({ ...note, content: tempNote });
       toast.success("Note saved");
       seteditNote(null);
-      refreshNotes(folderId, type);
+      renderNotes(folderId, type);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error("Internal Error");
@@ -182,7 +208,29 @@ const RightSide = () => {
       onClick={(e) => e.stopPropagation()}
     >
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-text">{note.title}</h1>
+        {editTitle ? (
+          <input
+            autoFocus
+            value={tempTitle}
+            onChange={(e) => settempTitle(e.target.value)}
+            onBlur={handleRenameTitle}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleRenameTitle();
+              if (e.key === "Escape") seteditTitle(false);
+            }}
+            className="text-3xl font-bold text-text bg-transparent outline-none border-b border-primary w-full"
+          />
+        ) : (
+          <h1
+            onDoubleClick={() => {
+              seteditTitle(true);
+              settempTitle(note.title);
+            }}
+            className="text-3xl font-bold text-text cursor-text"
+          >
+            {note.title}
+          </h1>
+        )}
         <CircleEllipsis
           size={30}
           className="text-primary hover:text-text cursor-pointer"
@@ -256,6 +304,10 @@ const RightSide = () => {
           <textarea
             value={tempNote}
             autoFocus
+            onFocus={(e) => {
+              const len = e.target.value.length;
+              e.target.setSelectionRange(len, len);
+            }}
             onChange={(e) => settempNote(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") seteditNote(null);
