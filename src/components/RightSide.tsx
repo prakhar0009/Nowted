@@ -28,7 +28,7 @@ const RightSide = () => {
   const [tempNote, settempNote] = useState("");
   const navigate = useNavigate();
 
-  const { setNotes, renderNotes, renderRecent } = useContext(NoteContext);
+  const { setNotes, refreshNotes, renderRecent } = useContext(NoteContext);
 
   const loadNote = async () => {
     if (!noteId) return;
@@ -46,7 +46,6 @@ const RightSide = () => {
       const newValue = !note.isFavorite;
       await favNote(note.id, newValue);
       setnote({ ...note, isFavorite: newValue });
-      // if we're in favorite list and unfavoriting, remove from list instantly
       if (type === "favorite" && !newValue) {
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       }
@@ -62,7 +61,6 @@ const RightSide = () => {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
       if (newValue) {
-        // archiving — remove from current list instantly
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         toast.success("Marked as Archived");
         if (type === "favorite") {
@@ -71,7 +69,6 @@ const RightSide = () => {
           navigate(`/${note.folderId}`);
         }
       } else {
-        // unarchiving — remove from archive list instantly
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         setnote({ ...note, isArchived: newValue });
         toast.success("Removed from Archived");
@@ -108,11 +105,11 @@ const RightSide = () => {
     try {
       const updateNote = await restoreNote(note.id);
       if (updateNote) {
-        // remove from trash list instantly
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         renderRecent();
+        setnote(null);
         toast.success("Note Restored Successfully");
-        navigate(`/${note.folderId}/${note.id}`);
+        navigate(`/additional/trash`);
       }
     } catch (e) {
       if (e instanceof Error) {
@@ -132,7 +129,7 @@ const RightSide = () => {
       setnote({ ...note, content: tempNote });
       toast.success("Note saved");
       seteditNote(null);
-      renderNotes(folderId, type);
+      refreshNotes(folderId, type);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error("Internal Error");
