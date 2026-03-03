@@ -10,9 +10,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState, useContext } from "react";
 import { getNoteById } from "../Api/GetApi";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { archiveNote, favNote, putNotes, restoreNote } from "../Api/PutApi";
-import { useNavigate } from "react-router-dom";
 import { DeleteNote } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
 import { NoteContext } from "../context/NoteContext";
@@ -25,12 +24,11 @@ const RightSide = () => {
   }>();
   const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
-
   const [editNote, seteditNote] = useState<string | null>(null);
   const [tempNote, settempNote] = useState("");
   const navigate = useNavigate();
 
-  const { setNotes, refreshNotes } = useContext(NoteContext);
+  const { setNotes, renderNotes, renderRecent } = useContext(NoteContext);
 
   const loadNote = async () => {
     if (!noteId) return;
@@ -48,6 +46,10 @@ const RightSide = () => {
       const newValue = !note.isFavorite;
       await favNote(note.id, newValue);
       setnote({ ...note, isFavorite: newValue });
+      // if we're in favorite list and unfavoriting, remove from list instantly
+      if (type === "favorite" && !newValue) {
+        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      }
       toast.success(newValue ? "Marked as Favorite" : "Removed from Favorite");
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
@@ -60,6 +62,7 @@ const RightSide = () => {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
       if (newValue) {
+        // archiving — remove from current list instantly
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         toast.success("Marked as Archived");
         if (type === "favorite") {
@@ -68,8 +71,11 @@ const RightSide = () => {
           navigate(`/${note.folderId}`);
         }
       } else {
+        // unarchiving — remove from archive list instantly
+        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         setnote({ ...note, isArchived: newValue });
         toast.success("Removed from Archived");
+        navigate("/additional/archive");
       }
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
@@ -102,7 +108,9 @@ const RightSide = () => {
     try {
       const updateNote = await restoreNote(note.id);
       if (updateNote) {
-        await refreshNotes(folderId, type);
+        // remove from trash list instantly
+        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        renderRecent();
         toast.success("Note Restored Successfully");
         navigate(`/${note.folderId}/${note.id}`);
       }
@@ -124,7 +132,7 @@ const RightSide = () => {
       setnote({ ...note, content: tempNote });
       toast.success("Note saved");
       seteditNote(null);
-      refreshNotes(folderId, type);
+      renderNotes(folderId, type);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error("Internal Error");
@@ -161,7 +169,6 @@ const RightSide = () => {
           'Restore' <br /> button and it will be added back to your list. It's
           that simple.
         </p>
-
         <button
           className="bg-primary-hover text-white rounded-md py-2 px-8 cursor-pointer"
           onClick={handleRestore}

@@ -7,7 +7,7 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Middle = () => {
-  const { notes, setNotes, refreshNotes } = useContext(NoteContext);
+  const { notes, setNotes, renderNotes } = useContext(NoteContext);
   const [folderName, setfolderName] = useState<string>("");
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
@@ -51,7 +51,7 @@ const Middle = () => {
         setfolderName("");
       }
 
-      refreshNotes(folderId, type);
+      renderNotes(folderId, type);
     };
 
     autoSelectFirstFolder();

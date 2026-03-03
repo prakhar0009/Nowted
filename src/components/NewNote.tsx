@@ -1,16 +1,18 @@
 import { Plus, X, Search } from "lucide-react";
 import { createNote } from "../Api/PostApi";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
 import toast from "react-hot-toast";
+import { NoteContext } from "../context/NoteContext";
 
 const NewNote = () => {
   const [overlay, setoverlay] = useState(false);
   const [title, settitle] = useState("");
   const [message, setmessage] = useState("");
-  const { folderId } = useParams();
+  const { folderId, type } = useParams();
   const navigate = useNavigate();
+  const { renderNotes, renderRecent } = useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
   const [searchBar, setSearchBar] = useState("");
@@ -24,6 +26,8 @@ const NewNote = () => {
       settitle("");
       setoverlay(false);
       setmessage("");
+      renderNotes(folderId, type);
+      renderRecent();
       navigate(`/${folderId}/${res.note.id}`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);

@@ -13,7 +13,7 @@ export const getFolders = async (): Promise<Folder[]> => {
   }
 };
 
-export const getRecentNotes = async (): Promise<Folder[]> => {
+export const getRecentNotes = async (): Promise<Note[]> => {
   try {
     const res = await api.get("/notes/recent");
     return res.data.recentNotes || [];

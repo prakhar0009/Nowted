@@ -7,10 +7,10 @@ import { NoteProvider } from "./context/NoteContext"; // Import your provider
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <NoteProvider>
-      <BrowserRouter>
+    <BrowserRouter>
+      <NoteProvider>
         <App />
-      </BrowserRouter>
-    </NoteProvider>
+      </NoteProvider>
+    </BrowserRouter>
   </StrictMode>,
 );

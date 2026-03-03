@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import {
   getNotesByFolder,
   getArchiveNotes,
   getFavoriteNotes,
   getDeletedNotes,
   getFolders,
+  getRecentNotes,
 } from "../Api/GetApi";
 
 export const NoteContext = createContext<any>(null);
@@ -12,8 +13,9 @@ export const NoteContext = createContext<any>(null);
 export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [notes, setNotes] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
+  const [recentNotes, setRecentNotes] = useState<any[]>([]);
 
-  const refreshNotes = async (folderId?: string, type?: string) => {
+  const renderNotes = async (folderId?: string, type?: string) => {
     try {
       let res = [];
       if (type === "trash") res = await getDeletedNotes();
@@ -26,7 +28,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const refreshFolders = async () => {
+  const renderFolders = async () => {
     try {
       const data = await getFolders();
       setFolders(data || []);
@@ -35,6 +37,20 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const renderRecent = async () => {
+    try {
+      const data = await getRecentNotes();
+      setRecentNotes(data || []);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
+  };
+
+  useEffect(() => {
+    renderFolders();
+    renderRecent();
+  }, []);
+
   return (
     <NoteContext.Provider
       value={{
@@ -42,8 +58,10 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         setNotes,
         folders,
         setFolders,
-        refreshNotes,
-        refreshFolders,
+        recentNotes,
+        renderNotes,
+        renderFolders,
+        renderRecent,
       }}
     >
       {children}

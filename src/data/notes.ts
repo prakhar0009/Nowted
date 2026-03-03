@@ -28,7 +28,7 @@ export type Props = {
 export type FolderProps = {
   currFolder: string | null;
   currFolderName: string | null;
-  refresh?: number;
+  render?: number;
   onNoteCreated?: () => void;
   setcurrNote?: (id: string) => void;
 };
