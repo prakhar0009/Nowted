@@ -22,7 +22,6 @@ const RightSide = () => {
     type?: string;
     folderId?: string;
   }>();
-  const [note, setnote] = useState<any>(null);
   const [overlay, setoverlay] = useState(false);
   const [editNote, seteditNote] = useState<string | null>(null);
   const [tempNote, settempNote] = useState("");
@@ -30,7 +29,13 @@ const RightSide = () => {
   const [tempTitle, settempTitle] = useState("");
   const navigate = useNavigate();
 
-  const { setNotes, renderNotes, renderRecent } = useContext(NoteContext);
+  const {
+    setNotes,
+    renderNotes,
+    renderRecent,
+    currentNote: note,
+    setcurrentNote: setnote,
+  } = useContext(NoteContext);
 
   const loadNote = async () => {
     if (!noteId) return;

@@ -1,34 +1,21 @@
 import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getFolders } from "../Api/GetApi";
+import { useState, useContext } from "react";
 import { createFolder } from "../Api/PostApi";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { DeleteFolder } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
 import { putFolders } from "../Api/PutApi";
+import { NoteContext } from "../context/NoteContext";
 
 const NewFolder = () => {
-  const [folder, setfolder] = useState<any[]>([]);
+  const { folders, renderFolders, reloadNote } = useContext(NoteContext);
   const [fName, setfName] = useState("");
   const [isFolder, setisFolder] = useState(false);
-  const { folderId } = useParams();
+  const { folderId, noteId } = useParams();
   const [editFolder, seteditFolder] = useState<string | null>(null);
   const [tempFName, settempFName] = useState("");
 
   const navigate = useNavigate();
-
-  const render = async () => {
-    try {
-      const data = await getFolders();
-      setfolder(data || []);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-    }
-  };
-
-  useEffect(() => {
-    render();
-  }, []);
 
   const handleNewFolder = async () => {
     if (fName.trim() === "") {
@@ -40,7 +27,7 @@ const NewFolder = () => {
       toast.success(`Folder created`);
       setfName("");
       setisFolder(false);
-      render();
+      renderFolders();
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
     }
@@ -56,7 +43,8 @@ const NewFolder = () => {
       await putFolders(id, tempFName);
       toast.success(`Folder renamed`);
       seteditFolder(null);
-      render();
+      await renderFolders();
+      if (noteId) reloadNote(noteId);
       navigate(`/${id}/${tempFName}`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
@@ -96,7 +84,7 @@ const NewFolder = () => {
         </div>
       )}
       <ul className="flex flex-col gap-3 min-h-0 overflow-y-auto hide-scrollbar">
-        {folder?.map((curr) => (
+        {folders?.map((curr: any) => (
           <NavLink
             className={({ isActive }) =>
               `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200
@@ -118,9 +106,7 @@ const NewFolder = () => {
             {editFolder === curr.id ? (
               <input
                 autoFocus
-                onChange={(e) => {
-                  settempFName(e.target.value);
-                }}
+                onChange={(e) => settempFName(e.target.value)}
                 onBlur={() => handleRenameFolder(curr.id)}
                 className="bg-middle-active text-text rounded px-1 outline-none w-full"
                 value={tempFName}
@@ -142,7 +128,7 @@ const NewFolder = () => {
                   try {
                     await DeleteFolder(curr.id);
                     toast.success("Folder is Deleted");
-                    render();
+                    renderFolders();
                   } catch {
                     toast.error("Can't delete Folder");
                   }

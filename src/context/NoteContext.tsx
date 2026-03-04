@@ -6,6 +6,7 @@ import {
   getDeletedNotes,
   getFolders,
   getRecentNotes,
+  getNoteById,
 } from "../Api/GetApi";
 
 export const NoteContext = createContext<any>(null);
@@ -14,6 +15,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [notes, setNotes] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
   const [recentNotes, setRecentNotes] = useState<any[]>([]);
+  const [currentNote, setcurrentNote] = useState<any>(null);
 
   const renderNotes = async (folderId?: string, type?: string) => {
     try {
@@ -46,6 +48,15 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const reloadNote = async (noteId: string) => {
+    try {
+      const res = await getNoteById(noteId);
+      setcurrentNote(res);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
+  };
+
   useEffect(() => {
     renderFolders();
     renderRecent();
@@ -59,9 +70,12 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         folders,
         setFolders,
         recentNotes,
+        currentNote,
+        setcurrentNote,
         renderNotes,
         renderFolders,
         renderRecent,
+        reloadNote,
       }}
     >
       {children}

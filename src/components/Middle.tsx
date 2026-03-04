@@ -18,6 +18,14 @@ const Middle = () => {
       }
       return;
     }
+    if (folderId) {
+      const currFolder = folders.find((f: any) => f.id === folderId);
+      if (currFolder) setfolderName(currFolder.name);
+    }
+  }, [folders]);
+
+  useEffect(() => {
+    if (!folderId && !type) return;
 
     setNotes([]);
 
@@ -35,7 +43,7 @@ const Middle = () => {
     }
 
     renderNotes(folderId, type);
-  }, [folderId, type, folders]);
+  }, [folderId, type]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;
