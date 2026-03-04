@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
 import toast from "react-hot-toast";
 import { NoteContext } from "../context/NoteContext";
+import { getSearchNotes } from "../Api/GetApi";
 
 const NewNote = () => {
   const [overlay, setoverlay] = useState(false);
@@ -12,10 +13,30 @@ const NewNote = () => {
   const [message, setmessage] = useState("");
   const { folderId, type } = useParams();
   const navigate = useNavigate();
-  const { renderNotes, renderRecent } = useContext(NoteContext);
+  const { renderNotes, renderRecent, setNotes } = useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
   const [searchBar, setSearchBar] = useState("");
+
+  const handleSearch = async (query: string) => {
+    setSearchBar(query);
+    if (query.trim() === "") {
+      renderNotes(folderId, type);
+      return;
+    }
+    try {
+      const res = await getSearchNotes(query);
+      setNotes(res);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+    }
+  };
+
+  const handleCloseSearch = () => {
+    setsearch(false);
+    setSearchBar("");
+    renderNotes(folderId, type);
+  };
 
   const handleNewNote = async () => {
     if (!folderId) return toast.error(`Select a folder first!`);
@@ -45,7 +66,13 @@ const NewNote = () => {
             className="dark:invert-0 invert-100"
           />
           <button
-            onClick={() => setsearch(!search)}
+            onClick={() => {
+              if (search) {
+                handleCloseSearch();
+              } else {
+                setsearch(true);
+              }
+            }}
             className="text-xl cursor-pointer text-primary hover:text-secondary"
           >
             {search ? <X size={20} /> : <Search />}
@@ -58,9 +85,9 @@ const NewNote = () => {
           autoFocus
           value={searchBar}
           placeholder="Search note here"
-          onChange={(e) => setSearchBar(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           onBlur={() => {
-            if (searchBar.trim() === "") setsearch(false);
+            if (searchBar.trim() === "") handleCloseSearch();
           }}
           className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-text outline-none"
           type="text"

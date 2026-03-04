@@ -79,7 +79,7 @@ const Middle = () => {
                   ? `/additional/favorite/${curr.id}`
                   : type === "archive"
                     ? `/additional/archive/${curr.id}`
-                    : `/${folderId}/${curr.id}`
+                    : `/${curr.folderId}/${curr.id}`
             }
             className={({ isActive }) =>
               `w-full p-5 rounded-xl border border-middle-active/5 cursor-pointer block

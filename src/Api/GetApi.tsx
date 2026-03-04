@@ -78,3 +78,14 @@ export const getArchiveNotes = async () => {
     return [];
   }
 };
+
+export const getSearchNotes = async (title: string) => {
+  try {
+    const res = await api.get(`notes?search=${title}&limit=1000`);
+    return res.data.notes || [];
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+    return [];
+  }
+};
