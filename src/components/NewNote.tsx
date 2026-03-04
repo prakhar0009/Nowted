@@ -13,7 +13,8 @@ const NewNote = () => {
   const [message, setmessage] = useState("");
   const { folderId, type } = useParams();
   const navigate = useNavigate();
-  const { renderNotes, renderRecent, setNotes } = useContext(NoteContext);
+  const { renderNotes, renderRecent, setNotes, setisSearching } =
+    useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
   const [searchBar, setSearchBar] = useState("");
@@ -21,10 +22,12 @@ const NewNote = () => {
   const handleSearch = async (query: string) => {
     setSearchBar(query);
     if (query.trim() === "") {
+      setisSearching(false);
       renderNotes(folderId, type);
       return;
     }
     try {
+      setisSearching(true);
       const res = await getSearchNotes(query);
       setNotes(res);
     } catch (e) {
@@ -35,6 +38,7 @@ const NewNote = () => {
   const handleCloseSearch = () => {
     setsearch(false);
     setSearchBar("");
+    setisSearching(false);
     renderNotes(folderId, type);
   };
 

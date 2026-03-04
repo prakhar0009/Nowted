@@ -16,6 +16,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [folders, setFolders] = useState<any[]>([]);
   const [recentNotes, setRecentNotes] = useState<any[]>([]);
   const [currentNote, setcurrentNote] = useState<any>(null);
+  const [isSearching, setisSearching] = useState(false);
 
   const renderNotes = async (folderId?: string, type?: string) => {
     try {
@@ -72,6 +73,8 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         recentNotes,
         currentNote,
         setcurrentNote,
+        isSearching,
+        setisSearching,
         renderNotes,
         renderFolders,
         renderRecent,

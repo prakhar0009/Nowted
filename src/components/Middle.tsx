@@ -6,7 +6,8 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const Middle = () => {
-  const { notes, setNotes, folders, renderNotes } = useContext(NoteContext);
+  const { notes, setNotes, folders, renderNotes, isSearching } =
+    useContext(NoteContext);
   const [folderName, setfolderName] = useState<string>("");
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
@@ -54,15 +55,17 @@ const Middle = () => {
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
           <h2 className="text-xl font-semibold text-text">
-            {folderId
-              ? folderName
-              : type === "trash"
-                ? "Trash"
-                : type === "favorite"
-                  ? "Favorite"
-                  : type === "archive"
-                    ? "Archived"
-                    : "Select Folder"}
+            {isSearching
+              ? "Searching"
+              : folderId
+                ? folderName
+                : type === "trash"
+                  ? "Trash"
+                  : type === "favorite"
+                    ? "Favorite"
+                    : type === "archive"
+                      ? "Archived"
+                      : "Select Folder"}
           </h2>
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
