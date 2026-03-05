@@ -216,7 +216,7 @@ const RightSide = () => {
     return (
       <div className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
         <History size={90} strokeWidth={0.5} />
-        <div className="w-full">
+        <div className=" flex justify-center items-center w-full">
           <h1 className="text-3xl font-medium truncate">
             Restore "{note.title}"
           </h1>
@@ -325,7 +325,7 @@ const RightSide = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-17.5 py-3 relative">
+        <div className="flex items-center gap-17.5 py-3 relative w-1/2">
           <div className="text-primary flex items-center gap-5">
             <Folder size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
