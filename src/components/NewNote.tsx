@@ -18,10 +18,10 @@ const NewNote = () => {
     useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
-  const searchQuery = searchParams.get("search") || "";
+  const searchData = searchParams.get("search") || "";
 
   useEffect(() => {
-    if (searchQuery.trim() === "") {
+    if (searchData.trim() === "") {
       setisSearching(false);
       renderNotes(folderId, type);
       return;
@@ -31,7 +31,7 @@ const NewNote = () => {
 
     const timer = setTimeout(async () => {
       try {
-        const res = await getSearchNotes(searchQuery);
+        const res = await getSearchNotes(searchData);
         setNotes(res);
       } catch (e) {
         if (e instanceof Error) console.log(e.message);
@@ -39,7 +39,7 @@ const NewNote = () => {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchData]);
 
   const handleCloseSearch = () => {
     setsearch(false);
@@ -93,7 +93,7 @@ const NewNote = () => {
       {search ? (
         <input
           autoFocus
-          value={searchQuery}
+          value={searchData}
           placeholder="Search note here"
           onChange={(e) => {
             if (e.target.value.trim() === "") {
@@ -103,7 +103,7 @@ const NewNote = () => {
             }
           }}
           onBlur={() => {
-            if (searchQuery.trim() === "") handleCloseSearch();
+            if (searchData.trim() === "") handleCloseSearch();
           }}
           className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-text outline-none"
           type="text"

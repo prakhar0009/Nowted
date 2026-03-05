@@ -56,7 +56,7 @@ const Middle = () => {
     <div className="w-full h-full bg-middleScreen flex flex-col">
       <div className="w-full p-[8%] pb-[4%]">
         <div className="flex justify-between items-center mb-5">
-          <h2 className="text-xl font-semibold text-text">
+          <h2 className="text-xl font-semibold text-text truncate w-80">
             {isSearching
               ? "Searching"
               : folderId

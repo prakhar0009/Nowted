@@ -214,9 +214,13 @@ const RightSide = () => {
 
   if (type === "trash") {
     return (
-      <section className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
+      <div className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
         <History size={90} strokeWidth={0.5} />
-        <h1 className="text-3xl font-medium">Restore "{note.title}"</h1>
+        <div className="w-full">
+          <h1 className="text-3xl font-medium truncate">
+            Restore "{note.title}"
+          </h1>
+        </div>
         <p className="text-center text-background-700">
           Don't want to lose this note? It's not too late! Just click the
           'Restore' <br /> button and it will be added back to your list. It's
@@ -228,7 +232,7 @@ const RightSide = () => {
         >
           Restore
         </button>
-      </section>
+      </div>
     );
   }
 
