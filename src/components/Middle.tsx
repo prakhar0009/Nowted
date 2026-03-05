@@ -13,9 +13,10 @@ const Middle = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (isSearching) return;
     if (!folderId && !type) {
       if (folders.length > 0) {
-        navigate(`/${folders[0].id}/${folders[0].name}`);
+        navigate(`/${folders[0].id}`);
       }
       return;
     }
@@ -26,6 +27,7 @@ const Middle = () => {
   }, [folders]);
 
   useEffect(() => {
+    if (isSearching) return;
     if (!folderId && !type) return;
 
     setNotes([]);
