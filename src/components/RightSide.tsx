@@ -7,12 +7,14 @@ import {
   FolderArchive,
   Trash,
   History,
+  ChevronDown,
 } from "lucide-react";
 import { useEffect, useState, useContext } from "react";
 import { getNoteById } from "../Api/GetApi";
 import { useParams, useNavigate } from "react-router-dom";
 import { archiveNote, favNote, putNotes, restoreNote } from "../Api/PutApi";
 import { DeleteNote } from "../Api/DeleteApi";
+import api from "../Api/Api";
 import toast from "react-hot-toast";
 import { NoteContext } from "../context/NoteContext";
 
@@ -27,12 +29,14 @@ const RightSide = () => {
   const [tempNote, settempNote] = useState("");
   const [editTitle, seteditTitle] = useState(false);
   const [tempTitle, settempTitle] = useState("");
+  const [folderDropdown, setfolderDropdown] = useState(false);
   const navigate = useNavigate();
 
   const {
     setNotes,
     renderNotes,
     renderRecent,
+    folders,
     currentNote: note,
     setcurrentNote: setnote,
   } = useContext(NoteContext);
@@ -68,6 +72,25 @@ const RightSide = () => {
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       seteditTitle(false);
+    }
+  };
+
+  const handleMoveNote = async (newFolderId: string, newFolderName: string) => {
+    if (!note) return;
+    try {
+      await api.patch(`/notes/${note.id}`, { folderId: newFolderId });
+      setnote({
+        ...note,
+        folderId: newFolderId,
+        folder: { name: newFolderName },
+      });
+      setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      toast.success(`Moved to ${newFolderName}`);
+      setfolderDropdown(false);
+      navigate(`/${newFolderId}/${note.id}`);
+    } catch (e) {
+      if (e instanceof Error) console.log(e.message);
+      else toast.error("Internal Error");
     }
   };
 
@@ -168,8 +191,10 @@ const RightSide = () => {
   };
 
   useEffect(() => {
-    loadNote();
+    if (noteId) loadNote();
+    else setnote(null);
     setoverlay(false);
+    setfolderDropdown(false);
   }, [noteId]);
 
   if (!noteId || !note) {
@@ -210,7 +235,10 @@ const RightSide = () => {
   return (
     <div
       className="w-full h-full bg-mainbg flex flex-col p-[5%] gap-7"
-      onClick={(e) => e.stopPropagation()}
+      onClick={() => {
+        setoverlay(false);
+        setfolderDropdown(false);
+      }}
     >
       <div className="flex justify-between items-center">
         {editTitle ? (
@@ -223,7 +251,7 @@ const RightSide = () => {
               if (e.key === "Enter") handleRenameTitle();
               if (e.key === "Escape") seteditTitle(false);
             }}
-            className="text-3xl font-bold text-text bg-transparent outline-none border-b border-primary w-full"
+            className="text-3xl w-180 font-bold text-text bg-transparent outline-none border-b border-primary overflow-hidden truncate"
           />
         ) : (
           <h1
@@ -231,7 +259,7 @@ const RightSide = () => {
               seteditTitle(true);
               settempTitle(note.title);
             }}
-            className="text-3xl font-bold text-text cursor-text"
+            className="text-3xl w-180 truncate font-bold text-text cursor-text"
           >
             {note.title}
           </h1>
@@ -242,6 +270,7 @@ const RightSide = () => {
           onClick={(e) => {
             e.stopPropagation();
             setoverlay((prev) => !prev);
+            setfolderDropdown(false);
           }}
         />
         {overlay && (
@@ -251,7 +280,7 @@ const RightSide = () => {
           >
             <button
               onClick={toggleFav}
-              className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
+              className="flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
             >
               <Star
                 className={
@@ -260,10 +289,9 @@ const RightSide = () => {
               />
               {note.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
             </button>
-
             <button
               onClick={toggleArchive}
-              className=" flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
+              className="flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
             >
               <FolderArchive
                 className={note.isArchived ? "text-blue-400 fill-blue-400" : ""}
@@ -272,7 +300,7 @@ const RightSide = () => {
             </button>
             <hr className="w-50 border border-b-overlay"></hr>
             <button
-              className=" flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover"
+              className="flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover"
               onClick={handleDelete}
             >
               <Trash />
@@ -293,14 +321,43 @@ const RightSide = () => {
           </div>
         </div>
 
-        <div className="flex items-center gap-17.5 py-3">
+        <div className="flex items-center gap-17.5 py-3 relative">
           <div className="text-primary flex items-center gap-5">
             <Folder size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
-          <div className="text-text text-sm underline decoration-primary underline-offset-4 font-bold">
-            {note.folder.name}
+          <div className="flex items-center gap-2">
+            <div className="text-text text-sm underline decoration-primary underline-offset-4 font-bold">
+              {note.folder.name}
+            </div>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setfolderDropdown((prev) => !prev);
+                setoverlay(false);
+              }}
+              className="text-primary hover:text-text cursor-pointer"
+            >
+              <ChevronDown size={16} />
+            </button>
           </div>
+          {folderDropdown && (
+            <div
+              onClick={(e) => e.stopPropagation()}
+              className="absolute top-10 left-0 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto hide-scrollbar"
+            >
+              {folders.map((f: any) => (
+                <button
+                  key={f.id}
+                  onClick={() => handleMoveNote(f.id, f.name)}
+                  className={`text-sm text-left px-3 py-2 rounded cursor-pointer hover:bg-secondary-hover
+                    ${note.folder.name === f.name ? "text-primary font-semibold" : "text-text"}`}
+                >
+                  {f.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

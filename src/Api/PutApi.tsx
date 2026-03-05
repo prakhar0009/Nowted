@@ -57,3 +57,13 @@ export const restoreNote = async (id: string) => {
     else toast.error("Internal Error");
   }
 };
+
+export const moveNote = async (noteId: string, folderId: string) => {
+  try {
+    const res = await api.patch(`/notes/${noteId}`, { folderId });
+    return res.data;
+  } catch (e) {
+    if (e instanceof Error) console.log(e.message);
+    else toast.error("Internal Error");
+  }
+};

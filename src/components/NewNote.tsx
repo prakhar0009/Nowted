@@ -1,7 +1,7 @@
 import { Plus, X, Search } from "lucide-react";
 import { createNote } from "../Api/PostApi";
-import { useState, useContext } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Nowted from "../assets/Nowted.svg";
 import toast from "react-hot-toast";
 import { NoteContext } from "../context/NoteContext";
@@ -13,31 +13,37 @@ const NewNote = () => {
   const [message, setmessage] = useState("");
   const { folderId, type } = useParams();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { renderNotes, renderRecent, setNotes, setisSearching } =
     useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
-  const [searchBar, setSearchBar] = useState("");
+  const searchQuery = searchParams.get("search") || "";
 
-  const handleSearch = async (query: string) => {
-    setSearchBar(query);
-    if (query.trim() === "") {
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
       setisSearching(false);
       renderNotes(folderId, type);
       return;
     }
-    try {
-      setisSearching(true);
-      const res = await getSearchNotes(query);
-      setNotes(res);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-    }
-  };
+
+    setisSearching(true);
+
+    const timer = setTimeout(async () => {
+      try {
+        const res = await getSearchNotes(searchQuery);
+        setNotes(res);
+      } catch (e) {
+        if (e instanceof Error) console.log(e.message);
+      }
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const handleCloseSearch = () => {
     setsearch(false);
-    setSearchBar("");
+    setSearchParams({});
     setisSearching(false);
     renderNotes(folderId, type);
   };
@@ -87,11 +93,17 @@ const NewNote = () => {
       {search ? (
         <input
           autoFocus
-          value={searchBar}
+          value={searchQuery}
           placeholder="Search note here"
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.trim() === "") {
+              setSearchParams({});
+            } else {
+              setSearchParams({ search: e.target.value });
+            }
+          }}
           onBlur={() => {
-            if (searchBar.trim() === "") handleCloseSearch();
+            if (searchQuery.trim() === "") handleCloseSearch();
           }}
           className="w-full py-3 px-4 border-0 rounded-md bg-secondary-hover text-text outline-none"
           type="text"
