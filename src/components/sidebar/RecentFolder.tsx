@@ -1,7 +1,7 @@
 import { FileText } from "lucide-react";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { NoteContext } from "../context/NoteContext";
+import { NoteContext } from "../../context/NoteContext";
 
 const RecentFolder = () => {
   const { recentNotes } = useContext(NoteContext);

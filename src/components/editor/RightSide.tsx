@@ -10,13 +10,18 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { useEffect, useState, useContext } from "react";
-import { getNoteById } from "../Api/GetApi";
 import { useParams, useNavigate } from "react-router-dom";
-import { archiveNote, favNote, putNotes, restoreNote } from "../Api/PutApi";
-import { DeleteNote } from "../Api/DeleteApi";
-import api from "../Api/Api";
+import {
+  archiveNote,
+  favNote,
+  putNotes,
+  restoreNote,
+  DeleteNote,
+  getNoteById,
+} from "../../Api/NoteApi";
+import api from "../../Api/Api";
 import toast from "react-hot-toast";
-import { NoteContext } from "../context/NoteContext";
+import { NoteContext } from "../../context/NoteContext";
 
 const RightSide = () => {
   const { noteId, type, folderId } = useParams<{

@@ -1,11 +1,9 @@
 import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
 import { useState, useContext } from "react";
-import { createFolder } from "../Api/PostApi";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
-import { DeleteFolder } from "../Api/DeleteApi";
 import toast from "react-hot-toast";
-import { putFolders } from "../Api/PutApi";
-import { NoteContext } from "../context/NoteContext";
+import { putFolders, DeleteFolder, createFolder } from "../../Api/FolderApi";
+import { NoteContext } from "../../context/NoteContext";
 
 const NewFolder = () => {
   const { folders, renderFolders, reloadNote } = useContext(NoteContext);

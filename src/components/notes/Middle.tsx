@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
-import { NoteContext } from "../context/NoteContext";
-import { DeleteNote } from "../Api/DeleteApi";
+import { NoteContext } from "../../context/NoteContext";
+import { DeleteNote } from "../../Api/NoteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";

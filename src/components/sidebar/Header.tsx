@@ -1,13 +1,12 @@
 import { Plus, X, Search } from "lucide-react";
-import { createNote } from "../Api/PostApi";
+import { createNote, getSearchNotes } from "../../Api/NoteApi";
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import Nowted from "../assets/Nowted.svg";
+import Nowted from "../../assets/Nowted.svg";
 import toast from "react-hot-toast";
-import { NoteContext } from "../context/NoteContext";
-import { getSearchNotes } from "../Api/GetApi";
+import { NoteContext } from "../../context/NoteContext";
 
-const NewNote = () => {
+const Header = () => {
   const [overlay, setoverlay] = useState(false);
   const [title, settitle] = useState("");
   const [message, setmessage] = useState("");
@@ -174,4 +173,4 @@ const NewNote = () => {
   );
 };
 
-export default NewNote;
+export default Header;

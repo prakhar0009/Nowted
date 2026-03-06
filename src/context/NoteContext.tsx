@@ -1,13 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import {
-  getNotesByFolder,
   getArchiveNotes,
   getFavoriteNotes,
   getDeletedNotes,
-  getFolders,
   getRecentNotes,
   getNoteById,
-} from "../Api/GetApi";
+  getNotesByFolder,
+} from "../Api/NoteApi";
+
+import { getFolders } from "../Api/FolderApi";
 
 export const NoteContext = createContext<any>(null);
 

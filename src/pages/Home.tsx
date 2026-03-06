@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
-import LeftSide from "../components/LeftSide";
-import Middle from "../components/Middle";
-import RightSide from "../components/RightSide";
+import LeftSide from "../components/sidebar/LeftSide";
+import Middle from "../components/notes/Middle";
+import RightSide from "../components/editor/RightSide";
 
 const Home = () => {
   return (

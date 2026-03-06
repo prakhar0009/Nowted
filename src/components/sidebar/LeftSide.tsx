@@ -1,14 +1,13 @@
 import ToggleTheme from "./ToggleTheme";
-import NewNote from "./NewNote";
 import NewFolder from "./NewFolder";
 import RecentFolder from "./RecentFolder";
 import AdditionalFolder from "./AdditionalFolder";
+import Header from "./Header";
 
 const LeftSide = () => {
   return (
     <div className="w-full h-full bg-mainbg p-[8%] flex flex-col gap-7">
-      <NewNote />
-
+      <Header />
       <RecentFolder />
       <NewFolder />
       <AdditionalFolder />
