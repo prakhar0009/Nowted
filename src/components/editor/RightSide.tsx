@@ -202,6 +202,13 @@ const RightSide = () => {
     setfolderDropdown(false);
   }, [noteId]);
 
+  useEffect(() => {
+    if (note && !note.content?.trim()) {
+      seteditNote(note.id);
+      settempNote("");
+    }
+  }, [note?.id]);
+
   if (!noteId || !note) {
     return (
       <div className="w-full h-full bg-mainbg flex flex-col items-center justify-center gap-4">
@@ -223,7 +230,7 @@ const RightSide = () => {
         <History size={90} strokeWidth={0.5} />
         <div className=" flex justify-center items-center w-full">
           <h1 className="text-3xl font-medium truncate">
-            Restore "{note.title}"
+            Restore "{note.title?.trim() ? note.title : "Untitled"}"
           </h1>
         </div>
         <p className="text-center text-background-700">
@@ -266,11 +273,11 @@ const RightSide = () => {
           <h1
             onDoubleClick={() => {
               seteditTitle(true);
-              settempTitle(note.title);
+              settempTitle(note.title?.trim() ? note.title : "Untitled");
             }}
             className="text-3xl w-180 truncate font-bold text-text cursor-text"
           >
-            {note.title}
+            {note.title?.trim() ? note.title : "Untitled"}
           </h1>
         )}
         <CircleEllipsis
@@ -375,6 +382,7 @@ const RightSide = () => {
           <textarea
             value={tempNote}
             autoFocus
+            placeholder="Write here!"
             onFocus={(e) => {
               const len = e.target.value.length;
               e.target.setSelectionRange(len, len);
@@ -388,7 +396,7 @@ const RightSide = () => {
               }
             }}
             onBlur={handleSaveContent}
-            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-full"
+            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-full placeholder:text-primary/40"
           />
         ) : (
           <p
@@ -398,7 +406,11 @@ const RightSide = () => {
             }}
             className="text-secondary leading-relaxed text-base cursor-text whitespace-pre-wrap"
           >
-            {note.content}
+            {note.content?.trim() ? (
+              note.content
+            ) : (
+              <span className="text-primary/40">Write here!</span>
+            )}
           </p>
         )}
       </div>

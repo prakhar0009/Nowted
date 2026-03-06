@@ -116,7 +116,7 @@ const Middle = () => {
             >
               <div className="flex justify-between items-center mb-2">
                 <h4 className="text-sm font-medium text-text truncate">
-                  {curr.title}
+                  {curr.title?.trim() ? curr.title : "Untitled"}
                 </h4>
                 {type !== "trash" && (
                   <button

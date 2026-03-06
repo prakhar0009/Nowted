@@ -7,9 +7,6 @@ import toast from "react-hot-toast";
 import { NoteContext } from "../../context/NoteContext";
 
 const Header = () => {
-  const [overlay, setoverlay] = useState(false);
-  const [title, settitle] = useState("");
-  const [message, setmessage] = useState("");
   const { folderId, type } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -49,16 +46,12 @@ const Header = () => {
 
   const handleNewNote = async () => {
     if (!folderId) return toast.error(`Select a folder first!`);
-    if (title.trim() === "") return toast.error("File name can't be empty");
     try {
-      const res = await createNote(folderId, title, message);
-      toast.success("Note added successfully");
-      settitle("");
-      setoverlay(false);
-      setmessage("");
+      const res = await createNote(folderId, "Untitled", "");
       renderNotes(folderId, type);
       renderRecent();
-      navigate(`/${folderId}/${res.note.id}`);
+      console.log(res);
+      navigate(`/${folderId}/${res.id}`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error("Internal Error");
@@ -110,64 +103,13 @@ const Header = () => {
       ) : (
         <button
           className="w-full py-3 rounded-md bg-secondary-hover flex items-center justify-center cursor-pointer gap-2"
-          onClick={() => setoverlay(true)}
+          onClick={handleNewNote}
         >
           <span className="text-lg">
             <Plus />
           </span>
           <span className="font-medium">New Note</span>
         </button>
-      )}
-
-      {overlay && (
-        <div
-          onClick={() => setoverlay(false)}
-          className="fixed inset-0 bg-overlaybg flex items-center justify-center z-50"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="bg-overlay rounded-xl p-6 w-[90%] max-w-md flex flex-col gap-4"
-          >
-            <div className="flex justify-between items-center">
-              <h2 className="text-text font-semibold text-lg">New Note</h2>
-              <button
-                onClick={() => setoverlay(false)}
-                className="text-primary hover:text-text"
-              >
-                <X size={20} />
-              </button>
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-primary text-sm">Title</label>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => settitle(e.target.value)}
-                placeholder="Enter note title"
-                className="bg-middle-active text-text text-sm rounded px-3 py-2 outline-none"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2">
-              <label className="text-primary text-sm">Content</label>
-              <textarea
-                value={message}
-                onChange={(e) => setmessage(e.target.value)}
-                placeholder="Enter note content"
-                rows={4}
-                className="bg-middle-active text-text text-sm rounded px-3 py-2 outline-none resize-none"
-              />
-            </div>
-
-            <button
-              onClick={handleNewNote}
-              className="bg-primary hover:bg-secondary-hover text-text py-2 rounded-md text-sm transition-all"
-            >
-              Add
-            </button>
-          </div>
-        </div>
       )}
     </div>
   );
