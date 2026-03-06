@@ -58,14 +58,14 @@ const NewFolder = () => {
         </h3>
         <button
           onClick={() => setisFolder(!isFolder)}
-          className="text-primary hover:text-text"
+          className="text-primary hover:text-text "
         >
           <FolderPlus />
         </button>
       </div>
 
       {isFolder && (
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-2 mb-3 px-[8%]">
           <input
             type="text"
             value={fName}
@@ -127,6 +127,7 @@ const NewFolder = () => {
                     await DeleteFolder(curr.id);
                     toast.success("Folder is Deleted");
                     renderFolders();
+                    navigate(`/`);
                   } catch {
                     toast.error("Can't delete Folder");
                   }

@@ -35,6 +35,7 @@ const RightSide = () => {
   const [editTitle, seteditTitle] = useState(false);
   const [tempTitle, settempTitle] = useState("");
   const [folderDropdown, setfolderDropdown] = useState(false);
+  const [showRestore, setShowRestore] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -143,6 +144,8 @@ const RightSide = () => {
     if (!note) return;
     try {
       await DeleteNote(note.id);
+      setShowRestore(true);
+
       setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       toast.success("Note moved to Trash");
       setoverlay(false);
@@ -150,8 +153,6 @@ const RightSide = () => {
         navigate("/additional/archive");
       } else if (type === "favorite") {
         navigate("/additional/favorite");
-      } else {
-        navigate(`/${note.folderId}`);
       }
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
@@ -224,7 +225,7 @@ const RightSide = () => {
     );
   }
 
-  if (type === "trash") {
+  if (type === "trash" || showRestore) {
     return (
       <div className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
         <History size={90} strokeWidth={0.5} />

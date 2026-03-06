@@ -21,7 +21,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
 
   const renderNotes = async (folderId?: string, type?: string) => {
     try {
-      let res = [];
+      let res: any[] = [];
       if (type === "trash") res = await getDeletedNotes();
       else if (type === "favorite") res = await getFavoriteNotes();
       else if (type === "archive") res = await getArchiveNotes();
