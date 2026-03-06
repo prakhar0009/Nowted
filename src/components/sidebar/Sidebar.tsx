@@ -4,9 +4,9 @@ import RecentFolder from "./RecentFolder";
 import AdditionalFolder from "./AdditionalFolder";
 import Header from "./Header";
 
-const LeftSide = () => {
+const Sidebar = () => {
   return (
-    <div className="w-full h-full bg-mainbg p-[8%] flex flex-col gap-7">
+    <div className="w-full h-full bg-mainbg py-[8%] flex flex-col gap-7">
       <Header />
       <RecentFolder />
       <NewFolder />
@@ -18,4 +18,4 @@ const LeftSide = () => {
   );
 };
 
-export default LeftSide;
+export default Sidebar;

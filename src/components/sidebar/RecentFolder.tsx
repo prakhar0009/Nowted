@@ -8,16 +8,16 @@ const RecentFolder = () => {
 
   return (
     <div className="w-full">
-      <h3 className="text-primary text-xs font-semibold tracking-wider mb-4">
+      <h3 className="text-primary text-xs font-semibold tracking-wider mb-4 px-[8%]">
         Recents
       </h3>
-      <div className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1">
         {recentNotes?.map((curr: any) => (
           <NavLink
             to={`/${curr.folderId}/${curr.id}`}
             key={curr.id}
             className={({ isActive }) =>
-              `px-1 py-2.5 rounded-md flex items-center gap-5 cursor-pointer duration-200
+              `py-2.5 rounded-md flex items-center pl-[8%] gap-5 cursor-pointer duration-200
               ${
                 isActive
                   ? "bg-secondary-hover text-secondary shadow-sm"

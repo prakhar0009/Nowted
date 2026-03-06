@@ -29,6 +29,18 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  height: 100%;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #181818;
+}
+
 .hide-scrollbar {
   /* scrollbar-width: none; */
   scrollbar-color: rgb(70, 64, 64) rgba(0, 0, 0, 0);

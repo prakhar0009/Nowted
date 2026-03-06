@@ -52,7 +52,7 @@ const NewFolder = () => {
 
   return (
     <div className="flex-1 min-h-0 flex flex-col">
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4 px-[8%]">
         <h3 className="text-primary text-xs font-semibold tracking-wider">
           Folders
         </h3>
@@ -85,7 +85,7 @@ const NewFolder = () => {
         {folders?.map((curr: any) => (
           <NavLink
             className={({ isActive }) =>
-              `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 duration-200
+              `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 group duration-200 pl-[8%]
               ${
                 isActive || editFolder === curr.id
                   ? "bg-secondary-hover text-secondary"
@@ -118,7 +118,7 @@ const NewFolder = () => {
             ) : (
               <span className="truncate w-full">{curr.name}</span>
             )}
-            <div className="flex justify-end w-full items-center mb-2">
+            <div className="group flex justify-end mr-3 items-center">
               <button
                 onClick={async (e) => {
                   e.preventDefault();
@@ -131,7 +131,7 @@ const NewFolder = () => {
                     toast.error("Can't delete Folder");
                   }
                 }}
-                className="text-primary hover:text-red-400 transition-all ml-2"
+                className="text-primary hover:text-red-400 transition-all ml-2 opacity-0 group-hover:opacity-100"
               >
                 <Trash2 size={17} />
               </button>
