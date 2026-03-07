@@ -4,6 +4,7 @@ import { DeleteNote } from "../../Api/NoteApi";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const SkeletonCard = () => (
   <div className="w-full p-5 rounded-xl border border-middle-active/5 bg-secondary-hover flex flex-col gap-3">
@@ -23,6 +24,7 @@ const Middle = () => {
     useContext(NoteContext);
   const [folderName, setfolderName] = useState<string>("");
   const [loading, setloading] = useState(false);
+  const [confirmNote, setconfirmNote] = useState<string | null>(null);
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
 
@@ -120,19 +122,10 @@ const Middle = () => {
                 </h4>
                 {type !== "trash" && (
                   <button
-                    onClick={async (e) => {
+                    onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      try {
-                        await DeleteNote(curr.id);
-                        setNotes((prev: any[]) =>
-                          prev.filter((n) => n.id !== curr.id),
-                        );
-                        toast.success("File is deleted");
-                        navigate(type ? `/additional/${type}` : `/${folderId}`);
-                      } catch {
-                        toast.error("Internal Error");
-                      }
+                      setconfirmNote(curr.id);
                     }}
                     className="text-primary hover:text-red-400 transition-all ml-2"
                   >
@@ -148,6 +141,27 @@ const Middle = () => {
           ))
         )}
       </div>
+
+      {confirmNote && (
+        <ConfirmDialog
+          message="This note will be moved to Trash."
+          onCancel={() => setconfirmNote(null)}
+          onConfirm={async () => {
+            try {
+              await DeleteNote(confirmNote);
+              setNotes((prev: any[]) =>
+                prev.filter((n) => n.id !== confirmNote),
+              );
+              toast.success("File is deleted");
+              setconfirmNote(null);
+              navigate(type ? `/additional/${type}` : `/${folderId}`);
+            } catch {
+              toast.error("Internal Error");
+              setconfirmNote(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

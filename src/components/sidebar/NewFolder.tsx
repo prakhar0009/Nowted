@@ -4,6 +4,7 @@ import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { putFolders, DeleteFolder, createFolder } from "../../Api/FolderApi";
 import { NoteContext } from "../../context/NoteContext";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const NewFolder = () => {
   const { folders, renderFolders, reloadNote } = useContext(NoteContext);
@@ -12,6 +13,7 @@ const NewFolder = () => {
   const { folderId, noteId } = useParams();
   const [editFolder, seteditFolder] = useState<string | null>(null);
   const [tempFName, settempFName] = useState("");
+  const [confirmFolder, setconfirmFolder] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -26,6 +28,7 @@ const NewFolder = () => {
       setfName("");
       setisFolder(false);
       renderFolders();
+      navigate(`/`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
     }
@@ -120,17 +123,10 @@ const NewFolder = () => {
             )}
             <div className="group flex justify-end mr-3 items-center">
               <button
-                onClick={async (e) => {
+                onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  try {
-                    await DeleteFolder(curr.id);
-                    toast.success("Folder is Deleted");
-                    renderFolders();
-                    navigate(`/`);
-                  } catch {
-                    toast.error("Can't delete Folder");
-                  }
+                  setconfirmFolder(curr.id);
                 }}
                 className="text-primary hover:text-red-400 transition-all ml-2 opacity-0 group-hover:opacity-100"
               >
@@ -140,6 +136,25 @@ const NewFolder = () => {
           </NavLink>
         ))}
       </ul>
+
+      {confirmFolder && (
+        <ConfirmDialog
+          message="This will permanently delete the folder and all its notes."
+          onCancel={() => setconfirmFolder(null)}
+          onConfirm={async () => {
+            try {
+              await DeleteFolder(confirmFolder);
+              toast.success("Folder is Deleted");
+              setconfirmFolder(null);
+              renderFolders();
+              navigate(`/`);
+            } catch {
+              toast.error("Can't delete Folder");
+              setconfirmFolder(null);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

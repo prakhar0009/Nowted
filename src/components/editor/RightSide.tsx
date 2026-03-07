@@ -22,6 +22,7 @@ import {
 import api from "../../Api/Api";
 import toast from "react-hot-toast";
 import { NoteContext } from "../../context/NoteContext";
+import ConfirmDialog from "../common/ConfirmDialog";
 
 const RightSide = () => {
   const { noteId, type, folderId } = useParams<{
@@ -36,6 +37,7 @@ const RightSide = () => {
   const [tempTitle, settempTitle] = useState("");
   const [folderDropdown, setfolderDropdown] = useState(false);
   const [showRestore, setShowRestore] = useState(false);
+  const [confirmDelete, setconfirmDelete] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -201,6 +203,8 @@ const RightSide = () => {
     else setnote(null);
     setoverlay(false);
     setfolderDropdown(false);
+    setShowRestore(false);
+    setconfirmDelete(false);
   }, [noteId]);
 
   useEffect(() => {
@@ -318,7 +322,10 @@ const RightSide = () => {
             <hr className="w-50 border border-b-overlay"></hr>
             <button
               className="flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover"
-              onClick={handleDelete}
+              onClick={() => {
+                setoverlay(false);
+                setconfirmDelete(true);
+              }}
             >
               <Trash />
               {"Delete"}
@@ -415,6 +422,17 @@ const RightSide = () => {
           </p>
         )}
       </div>
+
+      {confirmDelete && (
+        <ConfirmDialog
+          message="This note will be moved to Trash. You can restore it later."
+          onCancel={() => setconfirmDelete(false)}
+          onConfirm={() => {
+            setconfirmDelete(false);
+            handleDelete();
+          }}
+        />
+      )}
     </div>
   );
 };
