@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import api from "./Api";
+import api from "./api";
 import type { Note } from "../types/type";
 
 type NotePatch = Partial<{

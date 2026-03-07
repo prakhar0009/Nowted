@@ -1,5 +1,5 @@
 import { Plus, X, Search } from "lucide-react";
-import { createNote, getSearchNotes } from "../../Api/NoteApi";
+import { createNote, getSearchNotes } from "../../Api/note.api";
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Nowted from "../../assets/Nowted.svg";

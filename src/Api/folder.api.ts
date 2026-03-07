@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import api from "./Api";
+import api from "./api";
 import type { Folder } from "../types/type";
 
 export const getFolders = async (): Promise<Folder[]> => {

@@ -6,9 +6,9 @@ import {
   getRecentNotes,
   getNoteById,
   getNotesByFolder,
-} from "../Api/NoteApi";
+} from "../Api/note.api";
 
-import { getFolders } from "../Api/FolderApi";
+import { getFolders } from "../Api/folder.api";
 
 export const NoteContext = createContext<any>(null);
 

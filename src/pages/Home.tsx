@@ -1,7 +1,7 @@
 import { Toaster } from "react-hot-toast";
 import Sidebar from "../components/sidebar/Sidebar";
-import Middle from "../components/notes/Middle";
-import RightSide from "../components/editor/RightSide";
+import NotesList from "../components/notes/NotesList";
+import NoteEditor from "../components/editor/NoteEditor";
 
 const Home = () => {
   return (
@@ -10,10 +10,10 @@ const Home = () => {
         <Sidebar />
       </div>
       <div className="w-[25%] h-full border-r border-white/5">
-        <Middle />
+        <NotesList />
       </div>
       <div className="w-[55%] h-full">
-        <RightSide />
+        <NoteEditor />
       </div>
       <Toaster />
     </div>

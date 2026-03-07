@@ -18,13 +18,13 @@ import {
   restoreNote,
   DeleteNote,
   getNoteById,
-} from "../../Api/NoteApi";
-import api from "../../Api/Api";
+} from "../../Api/note.api";
+import api from "../../Api/api";
 import toast from "react-hot-toast";
 import { NoteContext } from "../../context/NoteContext";
-import ConfirmDialog from "../common/ConfirmDialog";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
-const RightSide = () => {
+const NoteEditor = () => {
   const { noteId, type, folderId } = useParams<{
     noteId?: string;
     type?: string;
@@ -468,4 +468,4 @@ const RightSide = () => {
   );
 };
 
-export default RightSide;
+export default NoteEditor;

@@ -2,9 +2,9 @@ import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
 import { useState, useContext } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import { putFolders, DeleteFolder, createFolder } from "../../Api/FolderApi";
+import { putFolders, DeleteFolder, createFolder } from "../../Api/folder.api";
 import { NoteContext } from "../../context/NoteContext";
-import ConfirmDialog from "../common/ConfirmDialog";
+import ConfirmDialog from "../ui/ConfirmDialog";
 
 const NewFolder = () => {
   const { folders, renderFolders, reloadNote } = useContext(NoteContext);
