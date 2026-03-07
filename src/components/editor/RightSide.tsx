@@ -38,6 +38,7 @@ const RightSide = () => {
   const [folderDropdown, setfolderDropdown] = useState(false);
   const [showRestore, setShowRestore] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
+  const [saving, setsaving] = useState(false);
   const navigate = useNavigate();
 
   const {
@@ -181,22 +182,29 @@ const RightSide = () => {
     }
   };
 
-  const handleSaveContent = async () => {
-    if (tempNote === note.content) {
-      seteditNote(null);
-      return;
-    }
-    try {
-      await putNotes(note.id, note.title, tempNote);
-      setnote({ ...note, content: tempNote });
-      toast.success("Note saved");
-      seteditNote(null);
-      renderNotes(folderId, type);
-    } catch (e) {
-      if (e instanceof Error) console.log(e.message);
-      else toast.error("Internal Error");
-    }
-  };
+  useEffect(() => {
+    if (!note || tempNote === note.content) return;
+    if (editNote !== note.id) return;
+
+    setsaving(true);
+    const timer = setTimeout(async () => {
+      try {
+        await putNotes(note.id, note.title, tempNote);
+        setnote({ ...note, content: tempNote });
+        renderNotes(folderId, type);
+      } catch (e) {
+        if (e instanceof Error) console.log(e.message);
+        else toast.error("Internal Error");
+      } finally {
+        setsaving(false);
+      }
+    }, 400);
+
+    return () => {
+      clearTimeout(timer);
+      setsaving(false);
+    };
+  }, [tempNote]);
 
   useEffect(() => {
     if (noteId) loadNote();
@@ -398,12 +406,7 @@ const RightSide = () => {
             onChange={(e) => settempNote(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") seteditNote(null);
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                handleSaveContent();
-              }
             }}
-            onBlur={handleSaveContent}
             className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-full placeholder:text-primary/40"
           />
         ) : (
@@ -420,6 +423,34 @@ const RightSide = () => {
               <span className="text-primary/40">Write here!</span>
             )}
           </p>
+        )}
+      </div>
+
+      <div className="flex justify-end items-center h-6">
+        {saving && (
+          <div className="flex items-center gap-2 text-primary/50">
+            <svg
+              className="animate-spin h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+              />
+            </svg>
+            <span className="text-xs">Saving...</span>
+          </div>
         )}
       </div>
 
