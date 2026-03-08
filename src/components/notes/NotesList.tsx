@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { NoteContext } from "../../context/NoteContext";
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -6,11 +6,12 @@ import NoteCard from "./NoteCard";
 import NoteSkeleton from "./NoteSkeleton";
 
 const NotesList = () => {
-  const { notes, setNotes, folders, renderNotes, isSearching } =
+  const { notes, setNotes, folders, fetchNotes, isSearching } =
     useContext(NoteContext);
 
   const [folderName, setFolderName] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const requestId = useRef(0);
 
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
@@ -37,6 +38,7 @@ const NotesList = () => {
 
     setNotes([]);
     setLoading(true);
+    const currentId = ++requestId.current;
 
     if (type === "trash") setFolderName("Trash");
     else if (type === "favorite") setFolderName("Favorite");
@@ -48,7 +50,11 @@ const NotesList = () => {
       setFolderName("");
     }
 
-    renderNotes(folderId, type).finally(() => setLoading(false));
+    fetchNotes(folderId, type).then((res: any[]) => {
+      if (currentId !== requestId.current) return;
+      setNotes(res);
+      setLoading(false);
+    });
   }, [folderId, type]);
 
   if (!folderId && !type) {

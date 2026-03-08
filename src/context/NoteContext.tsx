@@ -19,17 +19,26 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentNote, setcurrentNote] = useState<any>(null);
   const [isSearching, setisSearching] = useState(false);
 
-  const renderNotes = async (folderId?: string, type?: string) => {
+  const fetchNotes = async (
+    folderId?: string,
+    type?: string,
+  ): Promise<any[]> => {
     try {
       let res: any[] = [];
       if (type === "trash") res = await getDeletedNotes();
       else if (type === "favorite") res = await getFavoriteNotes();
       else if (type === "archive") res = await getArchiveNotes();
       else if (folderId) res = await getNotesByFolder(folderId);
-      setNotes(res || []);
+      return res || [];
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
+      return [];
     }
+  };
+
+  const renderNotes = async (folderId?: string, type?: string) => {
+    const res = await fetchNotes(folderId, type);
+    setNotes(res);
   };
 
   const renderFolders = async () => {
@@ -77,6 +86,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         isSearching,
         setisSearching,
         renderNotes,
+        fetchNotes,
         renderFolders,
         renderRecent,
         reloadNote,
