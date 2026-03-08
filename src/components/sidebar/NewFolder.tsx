@@ -46,7 +46,7 @@ const NewFolder = () => {
       seteditFolder(null);
       await renderFolders();
       if (noteId) reloadNote(noteId);
-      navigate(`/${id}/${tempFName}`);
+      navigate(`/${id}/folder/${tempFName}`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       seteditFolder(null);
@@ -96,7 +96,7 @@ const NewFolder = () => {
               }`
             }
             key={curr.id}
-            to={`/${curr.id}/${curr.name}`}
+            to={`/${curr.id}/folder/${curr.name}`}
             onDoubleClick={(e) => {
               e.preventDefault();
               seteditFolder(curr.id);

@@ -1,11 +1,7 @@
 import {
-  CircleEllipsis,
   CalendarDays,
   Folder,
   FileText,
-  Star,
-  FolderArchive,
-  Trash,
   History,
   ChevronDown,
 } from "lucide-react";
@@ -23,6 +19,9 @@ import api from "../../Api/api";
 import toast from "react-hot-toast";
 import { NoteContext } from "../../context/NoteContext";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import NoteHeader from "./NoteHeader";
+import NoteContent from "./NoteContent";
+import type { Note } from "../../types/type";
 
 const NoteEditor = () => {
   const { noteId, type, folderId } = useParams<{
@@ -61,21 +60,21 @@ const NoteEditor = () => {
   };
 
   const handleRenameTitle = async () => {
+    if (!note) return;
+
     if (tempTitle.trim() === "") {
       seteditTitle(false);
       toast.error("Note name is required");
       return;
     }
-    if (tempTitle === note.title) {
-      seteditTitle(false);
-      return;
-    }
+
     try {
       await putNotes(note.id, tempTitle, note.content);
       setnote({ ...note, title: tempTitle });
-      setNotes((prev: any[]) =>
+      setNotes((prev: Note[]) =>
         prev.map((n) => (n.id === note.id ? { ...n, title: tempTitle } : n)),
       );
+
       toast.success("Note renamed");
       seteditTitle(false);
     } catch (e) {
@@ -126,11 +125,8 @@ const NoteEditor = () => {
       if (newValue) {
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         toast.success("Marked as Archived");
-        if (type === "favorite") {
-          navigate("/additional/favorite");
-        } else {
-          navigate(`/${note.folderId}`);
-        }
+        if (type === "favorite") navigate("/additional/favorite");
+        else navigate(`/${note.folderId}`);
       } else {
         setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         setnote({ ...note, isArchived: newValue });
@@ -148,15 +144,10 @@ const NoteEditor = () => {
     try {
       await DeleteNote(note.id);
       setShowRestore(true);
-
       setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       toast.success("Note moved to Trash");
-      setoverlay(false);
-      if (type === "archive") {
-        navigate("/additional/archive");
-      } else if (type === "favorite") {
-        navigate("/additional/favorite");
-      }
+      if (type === "archive") navigate("/additional/archive");
+      else if (type === "favorite") navigate("/additional/favorite");
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
       else toast.error(`Internal Error`);
@@ -241,7 +232,7 @@ const NoteEditor = () => {
     return (
       <div className="p-12 pb-0 w-full flex justify-center items-center flex-col gap-5 min-h-screen">
         <History size={90} strokeWidth={0.5} />
-        <div className=" flex justify-center items-center w-full">
+        <div className="flex justify-center items-center w-full">
           <h1 className="text-3xl font-medium truncate">
             Restore "{note.title?.trim() ? note.title : "Untitled"}"
           </h1>
@@ -269,78 +260,20 @@ const NoteEditor = () => {
         setfolderDropdown(false);
       }}
     >
-      <div className="flex justify-between items-center">
-        {editTitle ? (
-          <input
-            autoFocus
-            value={tempTitle}
-            onChange={(e) => settempTitle(e.target.value)}
-            onBlur={handleRenameTitle}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") handleRenameTitle();
-              if (e.key === "Escape") seteditTitle(false);
-            }}
-            className="text-3xl w-180 font-bold text-text bg-transparent outline-none border-b border-primary overflow-hidden truncate"
-          />
-        ) : (
-          <h1
-            onDoubleClick={() => {
-              seteditTitle(true);
-              settempTitle(note.title?.trim() ? note.title : "Untitled");
-            }}
-            className="text-3xl w-180 truncate font-bold text-text cursor-text"
-          >
-            {note.title?.trim() ? note.title : "Untitled"}
-          </h1>
-        )}
-        <CircleEllipsis
-          size={30}
-          className="text-primary hover:text-text cursor-pointer"
-          onClick={(e) => {
-            e.stopPropagation();
-            setoverlay((prev) => !prev);
-            setfolderDropdown(false);
-          }}
-        />
-        {overlay && (
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="absolute top-25 right-14 rounded-md p-4 w-60 text-md flex flex-col gap-4 bg-overlay text-text"
-          >
-            <button
-              onClick={toggleFav}
-              className="flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
-            >
-              <Star
-                className={
-                  note.isFavorite ? "text-yellow-400 fill-yellow-400" : ""
-                }
-              />
-              {note.isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-            </button>
-            <button
-              onClick={toggleArchive}
-              className="flex gap-4 items-center py-2 cursor-pointer hover:bg-secondary-hover"
-            >
-              <FolderArchive
-                className={note.isArchived ? "text-blue-400 fill-blue-400" : ""}
-              />
-              {note.isArchived ? "Remove from Archives" : "Add to Archives"}
-            </button>
-            <hr className="w-50 border border-b-overlay"></hr>
-            <button
-              className="flex gap-4 items-center py-2 cursor-pointer hover:text-red-400 hover:bg-secondary-hover"
-              onClick={() => {
-                setoverlay(false);
-                setconfirmDelete(true);
-              }}
-            >
-              <Trash />
-              {"Delete"}
-            </button>
-          </div>
-        )}
-      </div>
+      <NoteHeader
+        note={note}
+        editTitle={editTitle}
+        tempTitle={tempTitle}
+        overlay={overlay}
+        settempTitle={settempTitle}
+        seteditTitle={seteditTitle}
+        setoverlay={setoverlay}
+        setfolderDropdown={setfolderDropdown}
+        setconfirmDelete={setconfirmDelete}
+        handleRenameTitle={handleRenameTitle}
+        toggleFav={toggleFav}
+        toggleArchive={toggleArchive}
+      />
 
       <div className="flex flex-col dark:divide-y divide-y dark:divide-white/10">
         <div className="flex items-center gap-20 py-3">
@@ -393,66 +326,14 @@ const NoteEditor = () => {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto w-full hide-scrollbar">
-        {editNote === note.id ? (
-          <textarea
-            value={tempNote}
-            autoFocus
-            placeholder="Write here!"
-            onFocus={(e) => {
-              const len = e.target.value.length;
-              e.target.setSelectionRange(len, len);
-            }}
-            onChange={(e) => settempNote(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Escape") seteditNote(null);
-            }}
-            className="w-full bg-transparent outline-none resize-none text-secondary leading-relaxed text-base h-full placeholder:text-primary/40"
-          />
-        ) : (
-          <p
-            onDoubleClick={() => {
-              seteditNote(note.id);
-              settempNote(note.content);
-            }}
-            className="text-secondary leading-relaxed text-base cursor-text whitespace-pre-wrap"
-          >
-            {note.content?.trim() ? (
-              note.content
-            ) : (
-              <span className="text-primary/40">Write here!</span>
-            )}
-          </p>
-        )}
-      </div>
-
-      <div className="flex justify-end items-center h-6">
-        {saving && (
-          <div className="flex items-center gap-2 text-primary/50">
-            <svg
-              className="animate-spin h-4 w-4"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <circle
-                className="opacity-25"
-                cx="12"
-                cy="12"
-                r="10"
-                stroke="currentColor"
-                strokeWidth="4"
-              />
-              <path
-                className="opacity-75"
-                fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-              />
-            </svg>
-            <span className="text-xs">Saving...</span>
-          </div>
-        )}
-      </div>
+      <NoteContent
+        note={note}
+        editNote={editNote}
+        tempNote={tempNote}
+        saving={saving}
+        settempNote={settempNote}
+        seteditNote={seteditNote}
+      />
 
       {confirmDelete && (
         <ConfirmDialog

@@ -6,9 +6,10 @@ import toast from "react-hot-toast";
 import { DeleteNote } from "../../Api/note.api";
 import { NoteContext } from "../../context/NoteContext";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import type { Note } from "../../types/type";
 
 interface Props {
-  note: any;
+  note: Note;
   type?: string;
   folderId?: string;
 }
@@ -24,7 +25,7 @@ const NoteCard = ({ note, type, folderId }: Props) => {
     try {
       await DeleteNote(confirmNote);
 
-      setNotes((prev: any[]) => prev.filter((n) => n.id !== confirmNote));
+      setNotes((prev: Note[]) => prev.filter((n) => n.id !== confirmNote));
 
       toast.success("File is deleted");
 
