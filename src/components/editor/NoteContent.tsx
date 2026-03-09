@@ -19,7 +19,7 @@ const NoteContent = ({
 }: Props) => {
   return (
     <>
-      <div className="flex-1 overflow-y-auto w-full hide-scrollbar">
+      <div className="flex-1 w-full overflow-x-hidden hide-scrollbar">
         {editNote === note.id ? (
           <textarea
             value={tempNote}

@@ -163,7 +163,13 @@ const NoteEditor = () => {
         renderRecent();
         setnote(null);
         toast.success("Note Restored Successfully");
-        navigate(`/additional/trash`);
+
+        if (type === "trash") {
+          navigate(`/additional/trash`);
+        } else {
+          navigate(`/${note.folderId}/${note.id}`);
+          renderNotes(note.folderId);
+        }
       }
     } catch (e) {
       if (e instanceof Error) {
