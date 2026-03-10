@@ -1,9 +1,10 @@
-import { useEffect, useState, useContext, useRef } from "react";
+import { useEffect, useState, useContext, useRef, useCallback } from "react";
 import { NoteContext } from "../../context/NoteContext";
 import { useNavigate, useParams } from "react-router-dom";
-
 import NoteCard from "./NoteCard";
 import NoteSkeleton from "./NoteSkeleton";
+
+const PAGE_LIMIT = 10;
 
 const NotesList = () => {
   const { notes, setnotes, folders, fetchNotes, isSearching } =
@@ -11,33 +12,25 @@ const NotesList = () => {
 
   const [folderName, setFolderName] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
   const requestId = useRef(0);
+  const loaderRef = useRef<HTMLDivElement>(null);
 
   const { folderId, type } = useParams<{ folderId?: string; type?: string }>();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isSearching) return;
-
-    if (!folderId && !type) {
-      if (folders.length > 0) {
-        navigate(`/${folders[0].id}`);
-      }
-      return;
-    }
-
-    if (folderId) {
-      const currFolder = folders.find((f: any) => f.id === folderId);
-      if (currFolder) setFolderName(currFolder.name);
-    }
-  }, [folders]);
-
-  useEffect(() => {
-    if (isSearching) return;
     if (!folderId && !type) return;
 
     setnotes([]);
+    setPage(1);
+    setHasMore(true);
     setLoading(true);
+
     const currentId = ++requestId.current;
 
     if (type === "trash") setFolderName("Trash");
@@ -50,12 +43,67 @@ const NotesList = () => {
       setFolderName("");
     }
 
-    fetchNotes(folderId, type).then((res: any[]) => {
+    fetchNotes(folderId, type, 1, PAGE_LIMIT).then((res: any[]) => {
       if (currentId !== requestId.current) return;
       setnotes(res);
+      setHasMore(res.length === PAGE_LIMIT);
       setLoading(false);
     });
   }, [folderId, type]);
+
+  useEffect(() => {
+    if (isSearching) return;
+    if (!folderId && !type) {
+      if (folders.length > 0) navigate(`/${folders[0].id}`);
+      return;
+    }
+    if (folderId) {
+      const currFolder = folders.find((f: any) => f.id === folderId);
+      if (currFolder) setFolderName(currFolder.name);
+    }
+  }, [folders]);
+
+  const handleLoadMore = useCallback(async () => {
+    if (loadingMore || !hasMore || loading) return;
+
+    setLoadingMore(true);
+    const nextPage = page + 1;
+    const currentId = requestId.current;
+
+    try {
+      const res = await fetchNotes(folderId, type, nextPage, PAGE_LIMIT);
+      if (currentId !== requestId.current) return;
+
+      setnotes((prev: any[]) => [...prev, ...res]);
+      setPage(nextPage);
+      setHasMore(res.length === PAGE_LIMIT);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [
+    loadingMore,
+    hasMore,
+    loading,
+    page,
+    folderId,
+    type,
+    fetchNotes,
+    setnotes,
+  ]);
+
+  useEffect(() => {
+    if (!loaderRef.current) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) handleLoadMore();
+      },
+      { threshold: 0.1 },
+    );
+
+    observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [handleLoadMore]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;
@@ -78,7 +126,6 @@ const NotesList = () => {
                       ? "Archived"
                       : "Select Folder"}
           </h2>
-
           <p className="text-primary text-sm">{notes.length} Notes</p>
         </div>
       </div>
@@ -92,14 +139,25 @@ const NotesList = () => {
             <NoteSkeleton />
           </>
         ) : (
-          notes.map((note: any) => (
-            <NoteCard
-              key={note.id}
-              note={note}
-              type={type}
-              folderId={folderId}
-            />
-          ))
+          <>
+            {notes.map((note: any) => (
+              <NoteCard
+                key={note.id}
+                note={note}
+                type={type}
+                folderId={folderId}
+              />
+            ))}
+
+            <div ref={loaderRef} className="w-full">
+              {loadingMore && (
+                <>
+                  <NoteSkeleton />
+                  <NoteSkeleton />
+                </>
+              )}
+            </div>
+          </>
         )}
       </div>
     </div>

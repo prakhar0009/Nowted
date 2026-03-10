@@ -10,13 +10,17 @@ type NotePatch = Partial<{
   folderId: string;
 }>;
 
-const getNotesByFilter = async (filter: string): Promise<Note[]> => {
+const getNotesByFilter = async (
+  filter: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<Note[]> => {
   try {
-    const res = await api.get(`/notes?${filter}=true&limit=all`);
+    const res = await api.get(
+      `/notes?${filter}=true&page=${page}&limit=${limit}`,
+    );
     return res.data.notes || [];
   } catch (e) {
-    if (e instanceof Error) console.log(e.message);
-    else toast.error("Internal Error");
     return [];
   }
 };
@@ -32,15 +36,17 @@ export const getRecentNotes = async (): Promise<Note[]> => {
   }
 };
 
-export const getNotesByFolder = async (folderId: string): Promise<Note[]> => {
+export const getNotesByFolder = async (
+  folderId: string,
+  page: number = 1,
+  limit: number = 10,
+): Promise<Note[]> => {
   try {
     const res = await api.get("/notes", {
-      params: { folderId, limit: 1000 },
+      params: { folderId, page, limit },
     });
     return res.data.notes || [];
   } catch (e) {
-    if (e instanceof Error) console.log(e.message);
-    else toast.error("Internal Error");
     return [];
   }
 };
@@ -56,17 +62,12 @@ export const getNoteById = async (id: string): Promise<string | null> => {
   }
 };
 
-export const getDeletedNotes = async () => {
-  return getNotesByFilter("deleted");
-};
-
-export const getFavoriteNotes = async () => {
-  return getNotesByFilter("favorite");
-};
-
-export const getArchiveNotes = async () => {
-  return getNotesByFilter("archived");
-};
+export const getDeletedNotes = (page?: number) =>
+  getNotesByFilter("deleted", page);
+export const getFavoriteNotes = (page?: number) =>
+  getNotesByFilter("favorite", page);
+export const getArchiveNotes = (page?: number) =>
+  getNotesByFilter("archived", page);
 
 export const getSearchNotes = async (title: string) => {
   try {
