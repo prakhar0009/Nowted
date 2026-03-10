@@ -28,7 +28,7 @@ export type FolderLink = Pick<Folder, "id" | "name">;
 
 export interface NoteContextType {
   notes: Note[];
-  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+  setnotes: React.Dispatch<React.SetStateAction<Note[]>>;
   folders: Folder[];
   setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   recentNotes: Note[];

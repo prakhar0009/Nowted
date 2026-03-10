@@ -9,8 +9,8 @@ import { NoteContext } from "../../context/NoteContext";
 const Header = () => {
   const { folderId, type } = useParams();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { renderNotes, renderRecent, setNotes, setisSearching } =
+  const [searchParams, setsearchParams] = useSearchParams();
+  const { renderNotes, renderRecent, setnotes, setisSearching } =
     useContext(NoteContext);
 
   const [search, setsearch] = useState(false);
@@ -28,7 +28,7 @@ const Header = () => {
     const timer = setTimeout(async () => {
       try {
         const res = await getSearchNotes(searchData);
-        setNotes(res);
+        setnotes(res);
       } catch (e) {
         if (e instanceof Error) console.log(e.message);
       }
@@ -39,7 +39,7 @@ const Header = () => {
 
   const handleCloseSearch = () => {
     setsearch(false);
-    setSearchParams({});
+    setsearchParams({});
     setisSearching(false);
     renderNotes(folderId, type);
   };
@@ -89,9 +89,9 @@ const Header = () => {
           placeholder="Search note here"
           onChange={(e) => {
             if (e.target.value.trim() === "") {
-              setSearchParams({});
+              setsearchParams({});
             } else {
-              setSearchParams({ search: e.target.value });
+              setsearchParams({ search: e.target.value });
             }
           }}
           onBlur={() => {

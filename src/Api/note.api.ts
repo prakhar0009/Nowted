@@ -12,7 +12,7 @@ type NotePatch = Partial<{
 
 const getNotesByFilter = async (filter: string): Promise<Note[]> => {
   try {
-    const res = await api.get(`/notes?${filter}=true&limit=1000`);
+    const res = await api.get(`/notes?${filter}=true&limit=all`);
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);
@@ -70,7 +70,7 @@ export const getArchiveNotes = async () => {
 
 export const getSearchNotes = async (title: string) => {
   try {
-    const res = await api.get(`notes?search=${title}&limit=1000`);
+    const res = await api.get(`notes?search=${title}&limit=all`);
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);

@@ -19,15 +19,14 @@ const NoteContent = ({
 }: Props) => {
   return (
     <>
-      <div className="flex-1 w-full overflow-x-hidden hide-scrollbar">
+      <div className="flex-1 w-full h-full hide-scrollbar overflow-hidden">
         {editNote === note.id ? (
           <textarea
             value={tempNote}
             autoFocus
             placeholder="Write here!"
             onFocus={(e) => {
-              const len = e.target.value.length;
-              e.target.setSelectionRange(len, len);
+              e.target.value.length;
             }}
             onChange={(e) => settempNote(e.target.value)}
             onKeyDown={(e) => {
@@ -37,7 +36,7 @@ const NoteContent = ({
           />
         ) : (
           <p
-            onDoubleClick={() => {
+            onClick={() => {
               seteditNote(note.id);
               settempNote(note.content);
             }}

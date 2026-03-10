@@ -6,7 +6,7 @@ import NoteCard from "./NoteCard";
 import NoteSkeleton from "./NoteSkeleton";
 
 const NotesList = () => {
-  const { notes, setNotes, folders, fetchNotes, isSearching } =
+  const { notes, setnotes, folders, fetchNotes, isSearching } =
     useContext(NoteContext);
 
   const [folderName, setFolderName] = useState<string>("");
@@ -36,7 +36,7 @@ const NotesList = () => {
     if (isSearching) return;
     if (!folderId && !type) return;
 
-    setNotes([]);
+    setnotes([]);
     setLoading(true);
     const currentId = ++requestId.current;
 
@@ -52,7 +52,7 @@ const NotesList = () => {
 
     fetchNotes(folderId, type).then((res: any[]) => {
       if (currentId !== requestId.current) return;
-      setNotes(res);
+      setnotes(res);
       setLoading(false);
     });
   }, [folderId, type]);

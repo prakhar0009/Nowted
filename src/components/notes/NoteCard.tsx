@@ -15,9 +15,9 @@ interface Props {
 }
 
 const NoteCard = ({ note, type, folderId }: Props) => {
-  const { setNotes } = useContext(NoteContext);
+  const { setnotes } = useContext(NoteContext);
 
-  const [confirmNote, setConfirmNote] = useState<string | null>(null);
+  const [confirmNote, setconfirmNote] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleDelete = async () => {
@@ -25,7 +25,7 @@ const NoteCard = ({ note, type, folderId }: Props) => {
     try {
       await DeleteNote(confirmNote);
 
-      setNotes((prev: Note[]) => prev.filter((n) => n.id !== confirmNote));
+      setnotes((prev: Note[]) => prev.filter((n) => n.id !== confirmNote));
 
       toast.success("File is deleted");
 
@@ -33,7 +33,7 @@ const NoteCard = ({ note, type, folderId }: Props) => {
     } catch {
       toast.error("Internal Error");
     } finally {
-      setConfirmNote(null);
+      setconfirmNote(null);
     }
   };
 
@@ -69,7 +69,7 @@ const NoteCard = ({ note, type, folderId }: Props) => {
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                setConfirmNote(note.id);
+                setconfirmNote(note.id);
               }}
               className="text-primary hover:text-red-400 transition-all ml-2"
             >
@@ -87,7 +87,7 @@ const NoteCard = ({ note, type, folderId }: Props) => {
       {confirmNote && (
         <ConfirmDialog
           message="This note will be moved to Trash."
-          onCancel={() => setConfirmNote(null)}
+          onCancel={() => setconfirmNote(null)}
           onConfirm={handleDelete}
         />
       )}

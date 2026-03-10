@@ -35,13 +35,13 @@ const NoteEditor = () => {
   const [editTitle, seteditTitle] = useState(false);
   const [tempTitle, settempTitle] = useState("");
   const [folderDropdown, setfolderDropdown] = useState(false);
-  const [showRestore, setShowRestore] = useState(false);
+  const [showRestore, setshowRestore] = useState(false);
   const [confirmDelete, setconfirmDelete] = useState(false);
   const [saving, setsaving] = useState(false);
   const navigate = useNavigate();
 
   const {
-    setNotes,
+    setnotes,
     renderNotes,
     renderRecent,
     folders,
@@ -71,7 +71,7 @@ const NoteEditor = () => {
     try {
       await putNotes(note.id, tempTitle, note.content);
       setnote({ ...note, title: tempTitle });
-      setNotes((prev: Note[]) =>
+      setnotes((prev: Note[]) =>
         prev.map((n) => (n.id === note.id ? { ...n, title: tempTitle } : n)),
       );
 
@@ -92,7 +92,7 @@ const NoteEditor = () => {
         folderId: newFolderId,
         folder: { name: newFolderName },
       });
-      setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       toast.success(`Moved to ${newFolderName}`);
       setfolderDropdown(false);
       navigate(`/${newFolderId}/${note.id}`);
@@ -109,7 +109,7 @@ const NoteEditor = () => {
       await favNote(note.id, newValue);
       setnote({ ...note, isFavorite: newValue });
       if (type === "favorite" && !newValue) {
-        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       }
       toast.success(newValue ? "Marked as Favorite" : "Removed from Favorite");
     } catch (e) {
@@ -123,12 +123,12 @@ const NoteEditor = () => {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
       if (newValue) {
-        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         toast.success("Marked as Archived");
         if (type === "favorite") navigate("/additional/favorite");
         else navigate(`/${note.folderId}`);
       } else {
-        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         setnote({ ...note, isArchived: newValue });
         toast.success("Removed from Archived");
         navigate("/additional/archive");
@@ -143,8 +143,8 @@ const NoteEditor = () => {
     if (!note) return;
     try {
       await DeleteNote(note.id);
-      setShowRestore(true);
-      setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      setshowRestore(true);
+      setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
       toast.success("Note moved to Trash");
       if (type === "archive") navigate("/additional/archive");
       else if (type === "favorite") navigate("/additional/favorite");
@@ -159,7 +159,7 @@ const NoteEditor = () => {
     try {
       const updateNote = await restoreNote(note.id);
       if (updateNote) {
-        setNotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
         renderRecent();
         setnote(null);
         toast.success("Note Restored Successfully");
@@ -208,7 +208,7 @@ const NoteEditor = () => {
     else setnote(null);
     setoverlay(false);
     setfolderDropdown(false);
-    setShowRestore(false);
+    setshowRestore(false);
     setconfirmDelete(false);
   }, [noteId]);
 
@@ -298,7 +298,7 @@ const NoteEditor = () => {
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
           <div className="flex items-center gap-2">
-            <div className="text-text text-sm underline decoration-primary underline-offset-4 font-bold">
+            <div className="text-text text-sm underline decoration-primary max-w-100 truncate underline-offset-4 font-bold">
               {note.folder.name}
             </div>
             <button
@@ -315,7 +315,7 @@ const NoteEditor = () => {
           {folderDropdown && (
             <div
               onClick={(e) => e.stopPropagation()}
-              className="absolute top-10 left-0 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 overflow-y-auto hide-scrollbar"
+              className="absolute top-10 left-0 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 hide-scrollbar overflow-x-hidden"
             >
               {folders.map((f: any) => (
                 <button

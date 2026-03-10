@@ -28,7 +28,9 @@ const RecentFolder = () => {
             <span>
               <FileText />
             </span>
-            <span className="text-sm truncate font-medium">{curr.title}</span>
+            <span className="text-sm w-65 truncate font-medium">
+              {curr.title}
+            </span>
           </NavLink>
         ))}
         {recentNotes.length === 0 && (

@@ -13,7 +13,7 @@ import { getFolders } from "../Api/folder.api";
 export const NoteContext = createContext<any>(null);
 
 export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
-  const [notes, setNotes] = useState<any[]>([]);
+  const [notes, setnotes] = useState<any[]>([]);
   const [folders, setFolders] = useState<any[]>([]);
   const [recentNotes, setRecentNotes] = useState<any[]>([]);
   const [currentNote, setcurrentNote] = useState<any>(null);
@@ -38,7 +38,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
 
   const renderNotes = async (folderId?: string, type?: string) => {
     const res = await fetchNotes(folderId, type);
-    setNotes(res);
+    setnotes(res);
   };
 
   const renderFolders = async () => {
@@ -77,7 +77,7 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
     <NoteContext.Provider
       value={{
         notes,
-        setNotes,
+        setnotes,
         folders,
         setFolders,
         recentNotes,
