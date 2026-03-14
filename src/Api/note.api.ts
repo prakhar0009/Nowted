@@ -21,6 +21,7 @@ const getNotesByFilter = async (
     );
     return res.data.notes || [];
   } catch (e) {
+    if (e instanceof Error) console.log(e.message);
     return [];
   }
 };
@@ -47,11 +48,12 @@ export const getNotesByFolder = async (
     });
     return res.data.notes || [];
   } catch (e) {
+    if (e instanceof Error) console.log(e.message);
     return [];
   }
 };
 
-export const getNoteById = async (id: string): Promise<string | null> => {
+export const getNoteById = async (id: string): Promise<Note | null> => {
   try {
     const res = await api.get(`/notes/${id}`);
     return res.data.note || null;

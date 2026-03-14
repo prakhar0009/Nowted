@@ -1,11 +1,11 @@
 import {
   CalendarDays,
-  Folder,
+  FolderIcon,
   FileText,
   History,
   ChevronDown,
 } from "lucide-react";
-import { useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   archiveNote,
@@ -17,11 +17,11 @@ import {
 } from "../../Api/note.api";
 import api from "../../Api/api";
 import toast from "react-hot-toast";
-import { NoteContext } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext.ts";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import NoteHeader from "./NoteHeader";
 import NoteContent from "./NoteContent";
-import type { Note } from "../../types/type";
+import type { Folder, Note } from "../../types/type";
 
 const NoteEditor = () => {
   const { noteId, type, folderId } = useParams<{
@@ -47,9 +47,9 @@ const NoteEditor = () => {
     folders,
     currentNote: note,
     setcurrentNote: setnote,
-  } = useContext(NoteContext);
+  } = useNotes();
 
-  const loadNote = async () => {
+  const loadNote = useCallback(async () => {
     if (!noteId) return;
     try {
       const res = await getNoteById(noteId);
@@ -57,7 +57,7 @@ const NoteEditor = () => {
     } catch (e) {
       if (e instanceof Error) console.log(e.message);
     }
-  };
+  }, [noteId, setnote]);
 
   const handleRenameTitle = async () => {
     if (!note) return;
@@ -92,7 +92,7 @@ const NoteEditor = () => {
         folderId: newFolderId,
         folder: { name: newFolderName },
       });
-      setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
       toast.success(`Moved to ${newFolderName}`);
       setfolderDropdown(false);
       navigate(`/${newFolderId}/${note.id}`);
@@ -109,7 +109,7 @@ const NoteEditor = () => {
       await favNote(note.id, newValue);
       setnote({ ...note, isFavorite: newValue });
       if (type === "favorite" && !newValue) {
-        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
       }
       toast.success(newValue ? "Marked as Favorite" : "Removed from Favorite");
     } catch (e) {
@@ -123,12 +123,12 @@ const NoteEditor = () => {
       const newValue = !note.isArchived;
       await archiveNote(note.id, newValue);
       if (newValue) {
-        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
         toast.success("Marked as Archived");
         if (type === "favorite") navigate("/additional/favorite");
         else navigate(`/${note.folderId}`);
       } else {
-        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
         setnote({ ...note, isArchived: newValue });
         toast.success("Removed from Archived");
         navigate("/additional/archive");
@@ -144,7 +144,7 @@ const NoteEditor = () => {
     try {
       await DeleteNote(note.id);
       setshowRestore(true);
-      setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+      setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
       toast.success("Note moved to Trash");
       if (type === "archive") navigate("/additional/archive");
       else if (type === "favorite") navigate("/additional/favorite");
@@ -159,7 +159,7 @@ const NoteEditor = () => {
     try {
       const updateNote = await restoreNote(note.id);
       if (updateNote) {
-        setnotes((prev: any[]) => prev.filter((n) => n.id !== note.id));
+        setnotes((prev: Note[]) => prev.filter((n) => n.id !== note.id));
         renderRecent();
         setnote(null);
         toast.success("Note Restored Successfully");
@@ -201,7 +201,7 @@ const NoteEditor = () => {
       clearTimeout(timer);
       setsaving(false);
     };
-  }, [tempNote]);
+  }, [tempNote, editNote, folderId, note, renderNotes, setnote, type]);
 
   useEffect(() => {
     if (noteId) loadNote();
@@ -210,14 +210,14 @@ const NoteEditor = () => {
     setfolderDropdown(false);
     setshowRestore(false);
     setconfirmDelete(false);
-  }, [noteId]);
+  }, [noteId, loadNote, setnote]);
 
   useEffect(() => {
     if (note && !note.content?.trim()) {
       seteditNote(note.id);
       settempNote("");
     }
-  }, [note?.id]);
+  }, [note]);
 
   if (!noteId || !note) {
     return (
@@ -294,7 +294,7 @@ const NoteEditor = () => {
 
         <div className="flex items-center gap-17.5 py-3 relative w-1/2">
           <div className="text-primary flex items-center gap-5">
-            <Folder size={20} />
+            <FolderIcon size={20} />
             <h3 className="text-xs font-semibold tracking-wider">Folder</h3>
           </div>
           <div className="flex items-center gap-2">
@@ -317,7 +317,7 @@ const NoteEditor = () => {
               onClick={(e) => e.stopPropagation()}
               className="absolute top-10 left-0 bg-overlay rounded-md p-2 w-48 flex flex-col gap-1 z-50 shadow-lg max-h-60 hide-scrollbar overflow-x-hidden"
             >
-              {folders.map((f: any) => (
+              {folders.map((f: Folder) => (
                 <button
                   key={f.id}
                   onClick={() => handleMoveNote(f.id, f.name)}

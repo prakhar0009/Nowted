@@ -25,9 +25,7 @@ const NoteContent = ({
             value={tempNote}
             autoFocus
             placeholder="Write here!"
-            onFocus={(e) => {
-              e.target.value.length;
-            }}
+            onFocus={(e) => e.target.value.length}
             onChange={(e) => settempNote(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Escape") seteditNote(null);

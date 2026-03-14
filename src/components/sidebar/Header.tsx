@@ -1,17 +1,16 @@
 import { Plus, X, Search } from "lucide-react";
 import { createNote, getSearchNotes } from "../../Api/note.api";
-import { useState, useContext, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Nowted from "../../assets/Nowted.svg";
 import toast from "react-hot-toast";
-import { NoteContext } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext.ts";
 
 const Header = () => {
   const { folderId, type } = useParams();
   const navigate = useNavigate();
   const [searchParams, setsearchParams] = useSearchParams();
-  const { renderNotes, renderRecent, setnotes, setisSearching } =
-    useContext(NoteContext);
+  const { renderNotes, renderRecent, setnotes, setisSearching } = useNotes();
 
   const [search, setsearch] = useState(false);
   const searchData = searchParams.get("search") || "";
@@ -19,7 +18,7 @@ const Header = () => {
   useEffect(() => {
     if (searchData.trim() === "") {
       setisSearching(false);
-      renderNotes(folderId, type);
+      // renderNotes(folderId, type);
       return;
     }
 
@@ -35,7 +34,7 @@ const Header = () => {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchData]);
+  }, [searchData, setisSearching, setnotes]);
 
   const handleCloseSearch = () => {
     setsearch(false);

@@ -2,6 +2,7 @@ import { FileText } from "lucide-react";
 import { useContext } from "react";
 import { NavLink } from "react-router-dom";
 import { NoteContext } from "../../context/NoteContext";
+import type { Note } from "../../types/type";
 
 const RecentFolder = () => {
   const { recentNotes } = useContext(NoteContext);
@@ -12,7 +13,7 @@ const RecentFolder = () => {
         Recents
       </h3>
       <div className="flex flex-col gap-1">
-        {recentNotes?.map((curr: any) => (
+        {recentNotes?.map((curr: Note) => (
           <NavLink
             to={`/${curr.folderId}/${curr.id}`}
             key={curr.id}

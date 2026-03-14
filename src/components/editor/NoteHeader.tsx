@@ -1,7 +1,8 @@
 import { CircleEllipsis, Star, FolderArchive, Trash } from "lucide-react";
+import type { Note } from "../../types/type";
 
 interface Props {
-  note: any;
+  note: Note;
   editTitle: boolean;
   tempTitle: string;
   overlay: boolean;

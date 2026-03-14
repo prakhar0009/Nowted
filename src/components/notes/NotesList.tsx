@@ -1,14 +1,14 @@
-import { useEffect, useState, useContext, useRef, useCallback } from "react";
-import { NoteContext } from "../../context/NoteContext";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useNotes } from "../../context/NoteContext";
 import { useNavigate, useParams } from "react-router-dom";
 import NoteCard from "./NoteCard";
 import NoteSkeleton from "./NoteSkeleton";
+import type { Folder, Note } from "../../types/type";
 
 const PAGE_LIMIT = 10;
 
 const NotesList = () => {
-  const { notes, setnotes, folders, fetchNotes, isSearching } =
-    useContext(NoteContext);
+  const { notes, setnotes, folders, fetchNotes, isSearching } = useNotes();
 
   const [folderName, setFolderName] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -37,19 +37,19 @@ const NotesList = () => {
     else if (type === "favorite") setFolderName("Favorite");
     else if (type === "archive") setFolderName("Archive");
     else if (folderId) {
-      const currFolder = folders.find((f: any) => f.id === folderId);
+      const currFolder = folders.find((f: Folder) => f.id === folderId);
       if (currFolder) setFolderName(currFolder.name);
     } else {
       setFolderName("");
     }
 
-    fetchNotes(folderId, type, 1, PAGE_LIMIT).then((res: any[]) => {
+    fetchNotes(folderId, type, 1, PAGE_LIMIT).then((res: Note[]) => {
       if (currentId !== requestId.current) return;
       setnotes(res);
       setHasMore(res.length === PAGE_LIMIT);
       setLoading(false);
     });
-  }, [folderId, type]);
+  }, [folderId, type, fetchNotes, folders, isSearching, setnotes]);
 
   useEffect(() => {
     if (isSearching) return;
@@ -58,13 +58,14 @@ const NotesList = () => {
       return;
     }
     if (folderId) {
-      const currFolder = folders.find((f: any) => f.id === folderId);
+      const currFolder = folders.find((f: Folder) => f.id === folderId);
       if (currFolder) setFolderName(currFolder.name);
     }
-  }, [folders]);
+  }, [folders, folderId, isSearching, navigate, type]);
 
   const handleLoadMore = useCallback(async () => {
-    if (loadingMore || !hasMore || loading) return;
+    if (loadingMore || !hasMore || loading || isSearching || notes.length === 0)
+      return;
 
     setLoadingMore(true);
     const nextPage = page + 1;
@@ -74,9 +75,11 @@ const NotesList = () => {
       const res = await fetchNotes(folderId, type, nextPage, PAGE_LIMIT);
       if (currentId !== requestId.current) return;
 
-      setnotes((prev: any[]) => [...prev, ...res]);
+      setnotes((prev: Note[]) => [...prev, ...res]);
       setPage(nextPage);
       setHasMore(res.length === PAGE_LIMIT);
+    } catch (e) {
+      console.log(e);
     } finally {
       setLoadingMore(false);
     }
@@ -84,6 +87,8 @@ const NotesList = () => {
     loadingMore,
     hasMore,
     loading,
+    isSearching,
+    notes.length,
     page,
     folderId,
     type,
@@ -92,6 +97,7 @@ const NotesList = () => {
   ]);
 
   useEffect(() => {
+    if (loading || notes.length === 0 || !hasMore) return;
     if (!loaderRef.current) return;
 
     const observer = new IntersectionObserver(
@@ -103,7 +109,7 @@ const NotesList = () => {
 
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [handleLoadMore]);
+  }, [handleLoadMore, loading, notes.length, hasMore]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;
@@ -140,7 +146,7 @@ const NotesList = () => {
           </>
         ) : (
           <>
-            {notes.map((note: any) => (
+            {notes.map((note: Note) => (
               <NoteCard
                 key={note.id}
                 note={note}

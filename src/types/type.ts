@@ -30,14 +30,21 @@ export interface NoteContextType {
   notes: Note[];
   setnotes: React.Dispatch<React.SetStateAction<Note[]>>;
   folders: Folder[];
-  setFolders: React.Dispatch<React.SetStateAction<Folder[]>>;
+  setfolders: React.Dispatch<React.SetStateAction<Folder[]>>;
   recentNotes: Note[];
   currentNote: Note | null;
   setcurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
   isSearching: boolean;
-  setisSearching: (v: boolean) => void;
+  setisSearching: React.Dispatch<React.SetStateAction<boolean>>;
+  page: number;
+  setpage: React.Dispatch<React.SetStateAction<number>>;
   renderNotes: (folderId?: string, type?: string) => Promise<void>;
-  fetchNotes: (folderId?: string, type?: string) => Promise<Note[]>;
+  fetchNotes: (
+    folderId?: string,
+    type?: string,
+    targetPage?: number,
+    limit?: number,
+  ) => Promise<Note[]>;
   renderFolders: () => Promise<void>;
   renderRecent: () => Promise<void>;
   reloadNote: (noteId: string) => Promise<void>;

@@ -1,13 +1,14 @@
-import { Folder, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
-import { useState, useContext } from "react";
+import { FolderIcon, FolderOpen, FolderPlus, Trash2 } from "lucide-react";
+import { useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { putFolders, DeleteFolder, createFolder } from "../../Api/folder.api";
-import { NoteContext } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext";
 import ConfirmDialog from "../ui/ConfirmDialog";
+import type { Folder } from "../../types/type";
 
 const NewFolder = () => {
-  const { folders, renderFolders, reloadNote } = useContext(NoteContext);
+  const { folders, renderFolders, reloadNote } = useNotes();
   const [fName, setfName] = useState("");
   const [isFolder, setisFolder] = useState(false);
   const { folderId, noteId } = useParams();
@@ -85,7 +86,7 @@ const NewFolder = () => {
         </div>
       )}
       <ul className="flex flex-col gap-3 min-h-0 overflow-y-auto hide-scrollbar">
-        {folders?.map((curr: any) => (
+        {folders?.map((curr: Folder) => (
           <NavLink
             className={({ isActive }) =>
               `flex items-center gap-5 text-sm cursor-pointer rounded px-1 py-2 group duration-200 pl-[8%]
@@ -103,7 +104,9 @@ const NewFolder = () => {
               settempFName(curr.name);
             }}
           >
-            <span>{folderId === curr.id ? <FolderOpen /> : <Folder />}</span>
+            <span>
+              {folderId === curr.id ? <FolderOpen /> : <FolderIcon />}
+            </span>
             {editFolder === curr.id ? (
               <input
                 autoFocus

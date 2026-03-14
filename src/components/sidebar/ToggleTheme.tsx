@@ -7,7 +7,7 @@ const ToggleTheme = () => {
   );
   useEffect(() => {
     document.documentElement.classList.toggle("dark", theme === "dark");
-  }, []);
+  }, [theme]);
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -18,7 +18,7 @@ const ToggleTheme = () => {
   return (
     <button
       onClick={toggleTheme}
-      className="w-1/2 py-2 border dark:border-white/20 rounded-md dark:hover:bg-white/10 hover:bg-black/10 transition-all flex items-center justify-center gap-2"
+      className="w-1/2 py-2 border dark:border-white/20 rounded-md  dark:hover:bg-primary-hover hover:bg-black/10 transition-all flex items-center justify-center gap-2"
     >
       {theme === "light" ? (
         <>
