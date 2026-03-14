@@ -5,7 +5,7 @@ import {
   History,
   ChevronDown,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   archiveNote,
@@ -48,6 +48,11 @@ const NoteEditor = () => {
     currentNote: note,
     setcurrentNote: setnote,
   } = useNotes();
+
+  const noteRef = useRef(note);
+  useEffect(() => {
+    noteRef.current = note;
+  }, [note]);
 
   const loadNote = useCallback(async () => {
     if (!noteId) return;
@@ -180,14 +185,17 @@ const NoteEditor = () => {
   };
 
   useEffect(() => {
-    if (!note || tempNote === note.content) return;
-    if (editNote !== note.id) return;
+    const n = noteRef.current;
+    if (!n || tempNote === n.content) return;
+    if (editNote !== n.id) return;
 
     setsaving(true);
     const timer = setTimeout(async () => {
+      const latest = noteRef.current;
+      if (!latest) return;
       try {
-        await putNotes(note.id, note.title, tempNote);
-        setnote({ ...note, content: tempNote });
+        await putNotes(latest.id, latest.title, tempNote);
+        setnote({ ...latest, content: tempNote });
         renderNotes(folderId, type);
       } catch (e) {
         if (e instanceof Error) console.log(e.message);
@@ -201,7 +209,7 @@ const NoteEditor = () => {
       clearTimeout(timer);
       setsaving(false);
     };
-  }, [tempNote, editNote, folderId, note, renderNotes, setnote, type]);
+  }, [tempNote, editNote, folderId, renderNotes, setnote, type]);
 
   useEffect(() => {
     if (noteId) loadNote();

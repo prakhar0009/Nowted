@@ -23,6 +23,16 @@ const NotesList = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (type === "trash") setFolderName("Trash");
+    else if (type === "favorite") setFolderName("Favorite");
+    else if (type === "archive") setFolderName("Archive");
+    else if (folderId) {
+      const currFolder = folders.find((f: Folder) => f.id === folderId);
+      if (currFolder) setFolderName(currFolder.name);
+    }
+  }, [folderId, type, folders]);
+
+  useEffect(() => {
     if (isSearching) return;
     if (!folderId && !type) return;
 
@@ -33,33 +43,19 @@ const NotesList = () => {
 
     const currentId = ++requestId.current;
 
-    if (type === "trash") setFolderName("Trash");
-    else if (type === "favorite") setFolderName("Favorite");
-    else if (type === "archive") setFolderName("Archive");
-    else if (folderId) {
-      const currFolder = folders.find((f: Folder) => f.id === folderId);
-      if (currFolder) setFolderName(currFolder.name);
-    } else {
-      setFolderName("");
-    }
-
     fetchNotes(folderId, type, 1, PAGE_LIMIT).then((res: Note[]) => {
       if (currentId !== requestId.current) return;
       setnotes(res);
       setHasMore(res.length === PAGE_LIMIT);
       setLoading(false);
     });
-  }, [folderId, type, fetchNotes, folders, isSearching, setnotes]);
+  }, [folderId, type, fetchNotes, isSearching, setnotes]);
 
   useEffect(() => {
     if (isSearching) return;
     if (!folderId && !type) {
       if (folders.length > 0) navigate(`/${folders[0].id}`);
       return;
-    }
-    if (folderId) {
-      const currFolder = folders.find((f: Folder) => f.id === folderId);
-      if (currFolder) setFolderName(currFolder.name);
     }
   }, [folders, folderId, isSearching, navigate, type]);
 
@@ -97,19 +93,19 @@ const NotesList = () => {
   ]);
 
   useEffect(() => {
-    if (loading || notes.length === 0 || !hasMore) return;
+    if (loading || notes.length === 0 || !hasMore || isSearching) return;
     if (!loaderRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) handleLoadMore();
+        if (entries[0].isIntersecting && hasMore) handleLoadMore();
       },
       { threshold: 0.1 },
     );
 
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [handleLoadMore, loading, notes.length, hasMore]);
+  }, [handleLoadMore, loading, notes.length, hasMore, isSearching]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;

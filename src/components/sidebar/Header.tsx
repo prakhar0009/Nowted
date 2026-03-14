@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import { useNotes } from "../../context/NoteContext.ts";
 
 const Header = () => {
-  const { folderId, type } = useParams();
+  const { folderId } = useParams();
   const navigate = useNavigate();
   const [searchParams, setsearchParams] = useSearchParams();
-  const { renderNotes, renderRecent, setnotes, setisSearching } = useNotes();
+  const { renderRecent, setnotes, setisSearching } = useNotes();
 
   const [search, setsearch] = useState(false);
   const searchData = searchParams.get("search") || "";
@@ -18,7 +18,6 @@ const Header = () => {
   useEffect(() => {
     if (searchData.trim() === "") {
       setisSearching(false);
-      // renderNotes(folderId, type);
       return;
     }
 
@@ -40,16 +39,13 @@ const Header = () => {
     setsearch(false);
     setsearchParams({});
     setisSearching(false);
-    renderNotes(folderId, type);
   };
 
   const handleNewNote = async () => {
     if (!folderId) return toast.error(`Select a folder first!`);
     try {
       const res = await createNote(folderId, "Untitled", "");
-      renderNotes(folderId, type);
       renderRecent();
-      console.log(res);
       navigate(`/${folderId}/${res.id}`);
     } catch (e) {
       if (e instanceof Error) console.log(e.message);

@@ -1,10 +1,10 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { Trash2 } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { DeleteNote } from "../../Api/note.api";
-import { NoteContext } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext.ts";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import type { Note } from "../../types/type";
 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const NoteCard = ({ note, type, folderId }: Props) => {
-  const { setnotes } = useContext(NoteContext);
+  const { setnotes } = useNotes();
 
   const [confirmNote, setconfirmNote] = useState<string | null>(null);
   const navigate = useNavigate();

@@ -18,7 +18,6 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [recentNotes, setRecentNotes] = useState<Note[]>([]);
   const [currentNote, setcurrentNote] = useState<Note | null>(null);
   const [isSearching, setisSearching] = useState(false);
-  const [page, setpage] = useState(1);
   const LIMIT = 10;
 
   const fetchNotes = useCallback(
@@ -116,8 +115,6 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         isSearching,
         setisSearching,
         renderNotes,
-        page,
-        setpage,
         fetchNotes,
         renderFolders,
         renderRecent,

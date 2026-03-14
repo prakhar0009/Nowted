@@ -17,15 +17,6 @@ export type Folder = {
   createdAt: string;
 };
 
-export type CreateNoteRequest = Omit<
-  Note,
-  "id" | "createdAt" | "isDeleted" | "preview" | "folder"
->;
-
-export type UpdateNoteRequest = Partial<Omit<Note, "id" | "createdAt">>;
-
-export type FolderLink = Pick<Folder, "id" | "name">;
-
 export interface NoteContextType {
   notes: Note[];
   setnotes: React.Dispatch<React.SetStateAction<Note[]>>;
@@ -36,8 +27,6 @@ export interface NoteContextType {
   setcurrentNote: React.Dispatch<React.SetStateAction<Note | null>>;
   isSearching: boolean;
   setisSearching: React.Dispatch<React.SetStateAction<boolean>>;
-  page: number;
-  setpage: React.Dispatch<React.SetStateAction<number>>;
   renderNotes: (folderId?: string, type?: string) => Promise<void>;
   fetchNotes: (
     folderId?: string,
@@ -49,27 +38,3 @@ export interface NoteContextType {
   renderRecent: () => Promise<void>;
   reloadNote: (noteId: string) => Promise<void>;
 }
-
-export type Props = {
-  currFolder: string | null;
-  setcurrFolder: (id: string) => void;
-  currFolderName: string | null;
-  setcurrFolderName: (name: string) => void;
-  onNoteCreated?: () => void;
-};
-
-export type FolderProps = {
-  currFolder: string | null;
-  currFolderName: string | null;
-  render?: number;
-  onNoteCreated?: () => void;
-  setcurrNote?: (id: string) => void;
-};
-
-export type NoteProps = {
-  currNote: string | null;
-};
-
-export type NoteWithFolder = Note & {
-  folder: { name: string };
-};

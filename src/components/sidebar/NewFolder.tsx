@@ -3,7 +3,7 @@ import { useState } from "react";
 import { NavLink, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 import { putFolders, DeleteFolder, createFolder } from "../../Api/folder.api";
-import { useNotes } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext.ts";
 import ConfirmDialog from "../ui/ConfirmDialog";
 import type { Folder } from "../../types/type";
 

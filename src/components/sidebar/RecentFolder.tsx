@@ -1,11 +1,10 @@
 import { FileText } from "lucide-react";
-import { useContext } from "react";
 import { NavLink } from "react-router-dom";
-import { NoteContext } from "../../context/NoteContext";
+import { useNotes } from "../../context/NoteContext.ts";
 import type { Note } from "../../types/type";
 
 const RecentFolder = () => {
-  const { recentNotes } = useContext(NoteContext);
+  const { recentNotes } = useNotes();
 
   return (
     <div className="w-full">
