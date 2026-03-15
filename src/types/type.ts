@@ -37,4 +37,8 @@ export interface NoteContextType {
   renderFolders: () => Promise<void>;
   renderRecent: () => Promise<void>;
   reloadNote: (noteId: string) => Promise<void>;
+  searchQuery: string;
+  searchPage: number;
+  searchHasMore: boolean;
+  fetchSearchNotes: (query: string, page: number) => Promise<void>;
 }

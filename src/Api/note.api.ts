@@ -71,9 +71,15 @@ export const getFavoriteNotes = (page?: number) =>
 export const getArchiveNotes = (page?: number) =>
   getNotesByFilter("archived", page);
 
-export const getSearchNotes = async (title: string) => {
+export const getSearchNotes = async (
+  title: string,
+  page: number = 1,
+  limit: number = 10,
+) => {
   try {
-    const res = await api.get(`notes?search=${title}&limit=all`);
+    const res = await api.get(
+      `notes?search=${title}&page=${page}&limit=${limit}`,
+    );
     return res.data.notes || [];
   } catch (e) {
     if (e instanceof Error) console.log(e.message);

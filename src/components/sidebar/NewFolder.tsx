@@ -26,6 +26,7 @@ const NewFolder = () => {
     try {
       await createFolder(fName);
       toast.success(`Folder created`);
+      renderFolders();
       setfName("");
       setisFolder(false);
       renderFolders();

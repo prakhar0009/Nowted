@@ -8,7 +8,17 @@ import type { Folder, Note } from "../../types/type";
 const PAGE_LIMIT = 10;
 
 const NotesList = () => {
-  const { notes, setnotes, folders, fetchNotes, isSearching } = useNotes();
+  const {
+    notes,
+    setnotes,
+    folders,
+    fetchNotes,
+    isSearching,
+    searchQuery,
+    searchPage,
+    searchHasMore,
+    fetchSearchNotes,
+  } = useNotes();
 
   const [folderName, setFolderName] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -93,19 +103,37 @@ const NotesList = () => {
   ]);
 
   useEffect(() => {
-    if (loading || notes.length === 0 || !hasMore || isSearching) return;
+    if (loading) return;
+    if (notes.length === 0) return;
+    if (!isSearching && !hasMore) return;
+    if (isSearching && !searchHasMore) return;
     if (!loaderRef.current) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore) handleLoadMore();
+        if (!entries[0].isIntersecting) return;
+        if (isSearching && searchHasMore) {
+          fetchSearchNotes(searchQuery, searchPage + 1);
+        } else if (!isSearching && hasMore) {
+          handleLoadMore();
+        }
       },
       { threshold: 0.1 },
     );
 
     observer.observe(loaderRef.current);
     return () => observer.disconnect();
-  }, [handleLoadMore, loading, notes.length, hasMore, isSearching]);
+  }, [
+    handleLoadMore,
+    loading,
+    notes.length,
+    hasMore,
+    isSearching,
+    searchHasMore,
+    searchQuery,
+    searchPage,
+    fetchSearchNotes,
+  ]);
 
   if (!folderId && !type) {
     return <div className="w-full h-full bg-middleScreen" />;

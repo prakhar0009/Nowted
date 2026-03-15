@@ -6,6 +6,7 @@ import {
   getRecentNotes,
   getNoteById,
   getNotesByFolder,
+  getSearchNotes,
 } from "../Api/note.api";
 import { getFolders } from "../Api/folder.api";
 import type { Folder, Note } from "../types/type";
@@ -18,6 +19,9 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
   const [recentNotes, setRecentNotes] = useState<Note[]>([]);
   const [currentNote, setcurrentNote] = useState<Note | null>(null);
   const [isSearching, setisSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchPage, setSearchPage] = useState(1);
+  const [searchHasMore, setSearchHasMore] = useState(false);
   const LIMIT = 10;
 
   const fetchNotes = useCallback(
@@ -51,6 +55,25 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
       setnotes(res);
     },
     [fetchNotes],
+  );
+
+  const fetchSearchNotes = useCallback(
+    async (query: string, page: number = 1) => {
+      try {
+        const res = await getSearchNotes(query, page, 10);
+        if (page === 1) {
+          setnotes(res);
+        } else {
+          setnotes((prev: Note[]) => [...prev, ...res]);
+        }
+        setSearchHasMore(res.length === 10);
+        setSearchPage(page);
+        setSearchQuery(query);
+      } catch (e) {
+        if (e instanceof Error) console.error(e.message);
+      }
+    },
+    [],
   );
 
   const renderFolders = useCallback(async () => {
@@ -119,6 +142,10 @@ export const NoteProvider = ({ children }: { children: React.ReactNode }) => {
         renderFolders,
         renderRecent,
         reloadNote,
+        searchQuery,
+        searchPage,
+        searchHasMore,
+        fetchSearchNotes,
       }}
     >
       {children}
